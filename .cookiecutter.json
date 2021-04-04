@@ -1,0 +1,10 @@
+{
+  "_template": "gh:oncleben31/cookiecutter-homeassistant-custom-component",
+  "class_name_prefix": "MotionEye",
+  "domain_name": "motioneye",
+  "friendly_name": "motionEye component",
+  "github_user": "dermotduffy",
+  "project_name": "hass-motioneye",
+  "test_suite": "yes",
+  "version": "0.0.0"
+}

@@ -1,0 +1,10 @@
+{
+  "domain": "motioneye",
+  "name": "motionEye",
+  "documentation": "https://github.com/dermotduffy/hass-motioneye",
+  "issue_tracker": "https://github.com/dermotduffy/hass-motioneye/issues",
+  "dependencies": [],
+  "config_flow": true,
+  "codeowners": ["@dermotduffy"],
+  "requirements": []
+}
