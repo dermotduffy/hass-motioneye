@@ -26,7 +26,7 @@ template which was used for the initial skeleton of this component.
 
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [black]: https://github.com/psf/black
-[buymecoffee]: https://www.buymeacoffee.com/dermotduffy
+[buymecoffee]: https://www.buymeacoffee.com/dermotdu
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
