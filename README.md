@@ -1,9 +1,10 @@
 # motionEye component
 
-[![GitHub Release][releases-shield]][releases]
-[![License][license-shield]](LICENSE)
-[![hacs][hacsbadge]][hacs]
-[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
+[![GitHub Release][releases_badge]][releases]
+[![Build Status][build_badge]][build]
+[![License][license_badge]](LICENSE)
+[![hacs][hacs_badge]][hacs]
+[![BuyMeCoffee][buymecoffee_badge]][buymecoffee]
 
 <img src="motioneye.png"
      alt="motionEye icon"
@@ -72,13 +73,15 @@ template which was used for the initial skeleton of this component.
 
 ---
 
+[build_badge]: https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Linting
+[build]: https://github.com/dermotduffy/hass-motioneye/actions/workflows/tests.yaml
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [black]: https://github.com/psf/black
 [buymecoffee]: https://www.buymeacoffee.com/dermotdu
-[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat
+[buymecoffee_badge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat
 [hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=plastic
+[hacs_badge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat
 [motioneyelogo]: motioneye.png
-[license-shield]: https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat
-[releases-shield]: https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=flat
+[license_badge]: https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat
+[releases_badge]: https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=flat
 [releases]: https://github.com/dermotduffy/hass-motioneye/releases
