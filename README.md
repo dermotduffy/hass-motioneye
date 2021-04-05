@@ -1,4 +1,4 @@
-# motionEye component
+# motionEye Home Assistant Integration
 
 [![GitHub Release][releases_badge]][releases]
 [![Build Status][build_badge]][build]
