@@ -2,6 +2,7 @@
 
 [![GitHub Release][releases_badge]][releases]
 [![Build Status][build_badge]][build]
+[![Test Coverage][coverage_badge]][coverage]
 [![License][license_badge]](LICENSE)
 [![hacs][hacs_badge]][hacs]
 [![BuyMeCoffee][buymecoffee_badge]][buymecoffee]
@@ -75,6 +76,8 @@ template which was used for the initial skeleton of this component.
 
 [build_badge]: https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Linting
 [build]: https://github.com/dermotduffy/hass-motioneye/actions/workflows/tests.yaml
+[coverage_badge]: https://img.shields.io/codecov/c/gh/dermotduffy/hass-motioneye?style=flat
+[coverage]: https://app.codecov.io/gh/dermotduffy/hass-motioneye/
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [black]: https://github.com/psf/black
 [buymecoffee]: https://www.buymeacoffee.com/dermotdu
