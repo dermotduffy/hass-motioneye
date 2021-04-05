@@ -46,9 +46,9 @@ Parameters:
 
 | Parameter       | Description                                                               |
 | --------------- | ------------------------------------------------------------------------- |
-| `entity_id` / `device_id` |An entity id or device id to set the text overlay on.|
-| `left_text` / `right_text`| One of `timestamp`, `camera-name`, `custom-text` or `disabled` to show a timestamp, the  name of the camera, custom text or nothing at all, on the left or right-hand side.|
-| `custom_left_text` / `custom_right_text`| Custom text to show on the left or right, if the `custom-text` value is selected.|
+| `entity_id` `device_id` |An entity id or device id to set the text overlay on.|
+| `left_text` `right_text`| One of `timestamp`, `camera-name`, `custom-text` or `disabled` to show a timestamp, the  name of the camera, custom text or nothing at all, on the left or right-hand side.|
+| `custom_left_text` `custom_right_text`| Custom text to show on the left or right, if the `custom-text` value is selected.|
 
 Note:
    * Calling this service triggers a reset of the motionEye cameras which will pause the stream / recordings / motion detection (etc).
