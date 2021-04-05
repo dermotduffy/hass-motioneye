@@ -1,0 +1,57 @@
+set_text_overlay:
+  name: Set Text Overlay
+  description: Sets the text overlay for a camera.
+  target:
+    device:
+      integration: motioneye
+    entity:
+      integration: motioneye
+  fields:
+    left_text:
+      name: Left Text Overlay
+      description: Text to display on the left
+      required: false
+      advanced: false
+      example: "timestamp"
+      default: ""
+      selector:
+        select:
+          options:
+            - "disabled"
+            - "camera-name"
+            - "timestamp"
+            - "custom-text"
+    custom_left_text:
+      name: Left Custom Text
+      description: Custom text to display on the left
+      required: false
+      advanced: false
+      example: "Hello on the left!"
+      default: ""
+      selector:
+        text:
+          multiline: true
+    right_text:
+      name: Right Text Overlay
+      description: Text to display on the right
+      required: false
+      advanced: false
+      example: "timestamp"
+      default: ""
+      selector:
+        select:
+          options:
+            - "disabled"
+            - "camera-name"
+            - "timestamp"
+            - "custom-text"
+    custom_right_text:
+      name: Right Custom Text
+      description: Custom text to display on the right
+      required: false
+      advanced: false
+      example: "Hello on the right!"
+      default: ""
+      selector:
+        text:
+          multiline: true

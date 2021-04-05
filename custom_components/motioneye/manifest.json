@@ -3,8 +3,13 @@
   "name": "motionEye",
   "documentation": "https://github.com/dermotduffy/hass-motioneye",
   "issue_tracker": "https://github.com/dermotduffy/hass-motioneye/issues",
-  "dependencies": [],
   "config_flow": true,
-  "codeowners": ["@dermotduffy"],
-  "requirements": []
+  "dependencies": ["http"],
+  "requirements": [
+    "motioneye-client==0.2.1"
+  ],
+  "codeowners": [
+    "@dermotduffy"
+  ],
+  "version": "0.0.0"
 }

@@ -1,0 +1,36 @@
+{
+  "title": "motionEye",
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "host": "[%key:common::config_flow::data::host%]",
+          "port": "[%key:common::config_flow::data::port%]",
+          "admin_username": "Admin [%key:common::config_flow::data::username%]",
+          "admin_password": "Admin [%key:common::config_flow::data::password%]",
+          "surveillance_username": "Surveillance [%key:common::config_flow::data::username%]",
+          "surveillance_password": "Surveillance [%key:common::config_flow::data::password%]"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "motion_detection_webhook_set": "Configure motionEye webhooks to report motion events to Home Assistant",
+          "motion_detection_webhook_set_overwrite": "Overwrite webhooks if they already exist"
+        }
+      }
+    }
+  }
+}

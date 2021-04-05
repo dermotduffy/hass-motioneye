@@ -1,0 +1,36 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Device is already configured",
+            "reauth_successful": "Re-authentication was successful"
+        },
+        "error": {
+            "cannot_connect": "Failed to connect",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "admin_password": "Admin Password",
+                    "admin_username": "Admin Username",
+                    "host": "Host",
+                    "port": "Port",
+                    "surveillance_password": "Surveillance Password",
+                    "surveillance_username": "Surveillance Username"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "motion_detection_webhook_set": "Configure motionEye webhooks to report motion events to Home Assistant",
+                    "motion_detection_webhook_set_overwrite": "Overwrite webhooks if they already exist"
+                }
+            }
+        }
+    },
+    "title": "motionEye"
+}
