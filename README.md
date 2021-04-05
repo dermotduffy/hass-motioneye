@@ -79,10 +79,10 @@ template which was used for the initial skeleton of this component.
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [black]: https://github.com/psf/black
 [buymecoffee]: https://www.buymeacoffee.com/dermotdu
-[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=plastic
 [hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=plastic
 [motioneyelogo]: motioneye.png
-[license-shield]: https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=plastic
+[releases-shield]: https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=plastic
 [releases]: https://github.com/dermotduffy/hass-motioneye/releases
