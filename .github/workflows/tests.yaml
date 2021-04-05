@@ -1,5 +1,5 @@
 ---
-name: Linting
+name: Build / Test / Lint
 
 on:
   push:
@@ -85,3 +85,9 @@ jobs:
             -n auto \
             -p no:sugar \
             tests
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
+          verbose: true
