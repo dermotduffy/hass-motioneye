@@ -38,6 +38,27 @@ Notes:
    * If the video streaming switch is turned off, the camera entity will become unavailable (but the rest of the integration will continue to work).
    * As cameras are added or removed to motionEye, devices/entities are automatically added or removed from Home Assistant.
 
+### Events
+
+On receipt of a motion callback, an event will be fired which can be used in automations (etc). Example event:
+
+```json
+{
+    "event_type": "motioneye.motion_detected",
+    "data": {
+        "device_id": "localhost:8765_2",
+        "name": "Office"
+    },
+    "origin": "LOCAL",
+    "time_fired": "2021-03-05T02:11:07.334122+00:00",
+    "context": {
+        "id": "ba692123787e03911779baa36ee1d333",
+        "parent_id": null,
+        "user_id": null
+    }
+}
+```
+
 ### Services
 
 #### motioneye.set_text_overlay
