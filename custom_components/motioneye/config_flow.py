@@ -72,7 +72,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
         errors = {}
         client = MotionEyeClient(
             user_input[CONF_HOST],
-            port=user_input[CONF_PORT],
+            user_input[CONF_PORT],
             admin_username=user_input.get(CONF_ADMIN_USERNAME),
             admin_password=user_input.get(CONF_ADMIN_PASSWORD),
             surveillance_username=user_input.get(CONF_SURVEILLANCE_USERNAME),

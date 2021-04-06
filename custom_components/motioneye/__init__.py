@@ -5,7 +5,7 @@ import asyncio
 import logging
 from multidict import MultiDictProxy
 import re
-from typing import cast, Any, Callable, Optional
+from typing import cast, Any, Callable
 
 from aiohttp import web
 from motioneye_client.client import (
@@ -59,7 +59,6 @@ from homeassistant.helpers.dispatcher import (
     async_dispatcher_send,
 )
 from homeassistant.helpers.network import NoURLAvailableError, get_url
-from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
@@ -182,7 +181,7 @@ async def _create_reauth_flow(
 
 
 async def _add_camera(
-    hass: HomeAssistantType,
+    hass: HomeAssistant,
     client: MotionEyeClient,
     entry: ConfigEntry,
     camera_id: int,
@@ -227,9 +226,7 @@ async def _add_camera(
     )
 
 
-async def _async_entry_updated(
-    hass: HomeAssistantType, config_entry: ConfigEntry
-) -> None:
+async def _async_entry_updated(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Handle entry updates."""
     await hass.config_entries.async_reload(config_entry.entry_id)
 
@@ -255,7 +252,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await client.async_client_close()
         raise ConfigEntryNotReady from exc
 
-    async def async_update_data() -> Optional[dict[str, Any]]:
+    async def async_update_data() -> dict[str, Any] | None:
         try:
             return await client.async_get_cameras()
         except MotionEyeClientError as exc:
@@ -463,7 +460,7 @@ class MotionEyeMotionDetectedView(HomeAssistantView):  # type: ignore[misc]
         return await self._handle(request.app["hass"], device_id, request.query)
 
     async def _handle(
-        self, hass: HomeAssistantType, device_id: str, data: MultiDictProxy[str]
+        self, hass: HomeAssistant, device_id: str, data: MultiDictProxy[str]
     ) -> web.Response:
         """Handle requests to the motionEye endpoint."""
         device_registry = await dr.async_get_registry(hass)
@@ -480,7 +477,7 @@ class MotionEyeMotionDetectedView(HomeAssistantView):  # type: ignore[misc]
         return cast(web.Response, self.json_message({}))
 
     async def _fire_event(
-        self, hass: HomeAssistantType, device_id: str, device_entry: dr.DeviceEntry
+        self, hass: HomeAssistant, device_id: str, device_entry: dr.DeviceEntry
     ) -> None:
         """Fire a Home Assistant event."""
         event_data = {

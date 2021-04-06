@@ -45,7 +45,6 @@ from . import (
     setup_mock_motioneye_config_entry,
 )
 
-
 from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 _LOGGER = logging.getLogger(__name__)
