@@ -52,12 +52,18 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
 
+    device_registry = await dr.async_get_registry(hass)
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)}
+    )
+    assert device
+
     expected_camera = copy.deepcopy(TEST_CAMERA)
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
     expected_camera[
         KEY_WEB_HOOK_NOTIFICATIONS_URL
-    ] = "http://example.local:8123/api/motioneye/device/test:8766_100/motion_detection"
+    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detection"
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
@@ -96,12 +102,18 @@ async def test_setup_camera_with_wrong_webhook(
         )
         await hass.async_block_till_done()
 
+    device_registry = await dr.async_get_registry(hass)
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)}
+    )
+    assert device
+
     expected_camera = copy.deepcopy(TEST_CAMERA)
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
     expected_camera[
         KEY_WEB_HOOK_NOTIFICATIONS_URL
-    ] = "http://example.local:8123/api/motioneye/device/test:8766_100/motion_detection"
+    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detection"
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 

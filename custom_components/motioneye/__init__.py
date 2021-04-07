@@ -79,6 +79,7 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     EVENT_MOTION_DETECTED,
+    MOTIONEYE_MANUFACTURER,
     SERVICE_SET_TEXT_OVERLAY,
     SIGNAL_CAMERA_ADD,
 )
@@ -182,6 +183,7 @@ async def _create_reauth_flow(
 
 async def _add_camera(
     hass: HomeAssistant,
+    device_registry: dr.DeviceRegistry,
     client: MotionEyeClient,
     entry: ConfigEntry,
     camera_id: int,
@@ -189,12 +191,21 @@ async def _add_camera(
     device_id: str,
 ) -> None:
     """Add a motionEye camera to hass."""
+    device_registry = await dr.async_get_registry(hass)
+
+    device = device_registry.async_get_or_create(
+        config_entry_id=entry.entry_id,
+        identifiers={(DOMAIN, device_id)},
+        manufacturer=MOTIONEYE_MANUFACTURER,
+        name=camera[KEY_NAME],
+    )
+    _LOGGER.error("==============> %s" % device.id)
     if entry.options.get(
         CONF_MOTION_DETECTION_WEBHOOK_SET, DEFAULT_MOTION_DETECTION_WEBHOOK_SET
     ):
         webhook_url = None
         try:
-            webhook_url = f"{get_url(hass)}{API_PATH_DEVICE_ROOT}{device_id}{API_ENDPOINT_MOTION_DETECTION}"
+            webhook_url = f"{get_url(hass)}{API_PATH_DEVICE_ROOT}{device.id}{API_ENDPOINT_MOTION_DETECTION}"
         except NoURLAvailableError:
             pass
 
@@ -293,7 +304,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 continue
             current_cameras.add(device_unique_id)
             hass.async_create_task(
-                _add_camera(hass, client, entry, camera_id, camera, device_unique_id)
+                _add_camera(
+                    hass,
+                    device_registry,
+                    client,
+                    entry,
+                    camera_id,
+                    camera,
+                    device_unique_id,
+                )
             )
 
         # Ensure every device associated with this config entry is still in the list of
