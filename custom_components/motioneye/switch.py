@@ -35,7 +35,6 @@ from .const import (
     CONF_CLIENT,
     CONF_COORDINATOR,
     DOMAIN,
-    MOTIONEYE_MANUFACTURER,
     TYPE_MOTIONEYE_SWITCH_BASE,
 )
 
@@ -142,15 +141,7 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
     @property
     def device_info(self) -> dict[str, Any] | None:
         """Return the device information."""
-        return {
-            "identifiers": {
-                # Serial numbers are unique identifiers within a specific domain
-                (DOMAIN, self._device_id),
-            },
-            "name": self._camera[KEY_NAME] if self._camera else "",
-            "manufacturer": MOTIONEYE_MANUFACTURER,
-            "model": MOTIONEYE_MANUFACTURER,
-        }
+        return {"identifiers": {(DOMAIN, self._device_id)}}
 
     @callback  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:

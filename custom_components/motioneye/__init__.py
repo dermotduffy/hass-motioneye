@@ -192,12 +192,12 @@ async def _add_camera(
     device_id: str,
 ) -> None:
     """Add a motionEye camera to hass."""
-    device_registry = await dr.async_get_registry(hass)
 
     device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, device_id)},
         manufacturer=MOTIONEYE_MANUFACTURER,
+        model=MOTIONEYE_MANUFACTURER,
         name=camera[KEY_NAME],
     )
     if entry.options.get(
