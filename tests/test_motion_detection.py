@@ -126,7 +126,7 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
     client = create_mock_motioneye_client()
     config_entry = await setup_mock_motioneye_config_entry(hass, client=client)
 
-    device_registry.async_get_or_create(
+    device = device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
         identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)},
     )
@@ -140,7 +140,11 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
     assert resp.status == HTTP_OK
 
     assert len(events) == 1
-    assert events[0].data == {"device_id": "test:8766_100", "name": TEST_CAMERA_NAME}
+    assert events[0].data == {
+        "unique_id": "test:8766_100",
+        "name": TEST_CAMERA_NAME,
+        "device_id": device.id,
+    }
 
 
 async def test_bad_query_wrong_url(

@@ -43,6 +43,7 @@ from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
     CONF_PORT,
+    CONF_UNIQUE_ID,
     CONF_SOURCE,
     HTTP_NOT_FOUND,
 )
@@ -199,7 +200,6 @@ async def _add_camera(
         manufacturer=MOTIONEYE_MANUFACTURER,
         name=camera[KEY_NAME],
     )
-    _LOGGER.error("==============> %s" % device.id)
     if entry.options.get(
         CONF_MOTION_DETECTION_WEBHOOK_SET, DEFAULT_MOTION_DETECTION_WEBHOOK_SET
     ):
@@ -500,7 +500,8 @@ class MotionEyeMotionDetectedView(HomeAssistantView):  # type: ignore[misc]
     ) -> None:
         """Fire a Home Assistant event."""
         event_data = {
-            CONF_DEVICE_ID: device_id,
+            CONF_DEVICE_ID: device_entry.id,
             CONF_NAME: device_entry.name,
+            CONF_UNIQUE_ID: device_id,
         }
         hass.bus.async_fire(EVENT_MOTION_DETECTED, event_data)
