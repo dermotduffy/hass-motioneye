@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from multidict import MultiDictProxy
 import re
 from typing import cast, Any, Callable
 
@@ -43,7 +42,6 @@ from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
     CONF_PORT,
-    CONF_UNIQUE_ID,
     CONF_SOURCE,
     HTTP_NOT_FOUND,
 )
@@ -63,9 +61,8 @@ from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
-    API_ENDPOINT_MOTION_DETECTION,
     API_PATH_DEVICE_ROOT,
-    API_PATH_MOTION_DETECTION_REGEXP,
+    API_PATH_EVENT_REGEXP,
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
     CONF_CLIENT,
@@ -167,7 +164,7 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     """Set up the motionEye component."""
     hass.data[DOMAIN] = {}
     MotionEyeServices(hass).async_register()
-    hass.http.register_view(MotionEyeMotionDetectedView())
+    hass.http.register_view(MotionEyeView())
     return True
 
 
@@ -205,7 +202,7 @@ async def _add_camera(
     ):
         webhook_url = None
         try:
-            webhook_url = f"{get_url(hass)}{API_PATH_DEVICE_ROOT}{device.id}{API_ENDPOINT_MOTION_DETECTION}"
+            webhook_url = f"{get_url(hass)}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}"
         except NoURLAvailableError:
             pass
 
@@ -467,24 +464,22 @@ class MotionEyeServices:
             await client.async_set_camera(camera_id, camera)
 
 
-class MotionEyeMotionDetectedView(HomeAssistantView):  # type: ignore[misc]
+class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
     """View to handle motionEye motion detection."""
 
-    url = API_PATH_MOTION_DETECTION_REGEXP
     name = f"api:{DOMAIN}"
     requires_auth = False
+    url = API_PATH_EVENT_REGEXP
 
-    async def get(self, request: web.Request, device_id: str) -> web.Response:
-        """Handle the GET request received from motionEye."""
-        return await self._handle(request.app["hass"], device_id, request.query)
-
-    async def _handle(
-        self, hass: HomeAssistant, device_id: str, data: MultiDictProxy[str]
+    async def get(
+        self, request: web.Request, device_id: str, event: str
     ) -> web.Response:
-        """Handle requests to the motionEye endpoint."""
+        """Handle the GET request received from motionEye."""
+        hass = request.app["hass"]
         device_registry = await dr.async_get_registry(hass)
-        device_entry = device_registry.async_get_device({(DOMAIN, device_id)})
-        if not device_entry or (DOMAIN, device_id) not in device_entry.identifiers:
+        device = device_registry.async_get(device_id)
+
+        if not device:
             return cast(
                 web.Response,
                 self.json_message(
@@ -492,16 +487,20 @@ class MotionEyeMotionDetectedView(HomeAssistantView):  # type: ignore[misc]
                     status_code=HTTP_NOT_FOUND,
                 ),
             )
-        await self._fire_event(hass, device_id, device_entry)
+        await self._fire_event(hass, event, device)
         return cast(web.Response, self.json_message({}))
 
     async def _fire_event(
-        self, hass: HomeAssistant, device_id: str, device_entry: dr.DeviceEntry
+        self,
+        hass: HomeAssistant,
+        event_type: str,
+        device: dr.DeviceEntry,
     ) -> None:
         """Fire a Home Assistant event."""
-        event_data = {
-            CONF_DEVICE_ID: device_entry.id,
-            CONF_NAME: device_entry.name,
-            CONF_UNIQUE_ID: device_id,
-        }
-        hass.bus.async_fire(EVENT_MOTION_DETECTED, event_data)
+        hass.bus.async_fire(
+            f"{DOMAIN}.{event_type}",
+            {
+                CONF_DEVICE_ID: device.id,
+                CONF_NAME: device.name,
+            },
+        )

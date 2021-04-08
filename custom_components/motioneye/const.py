@@ -5,12 +5,16 @@ DOMAIN = "motioneye"
 
 API_PATH_ROOT = f"/api/{DOMAIN}"
 API_PATH_DEVICE_ROOT = f"{API_PATH_ROOT}/device/"
-API_ENDPOINT_MOTION_DETECTION = "/motion_detection"
 
-API_PATH_MOTION_DETECTION_REGEXP = (
+EVENT_MOTION_DETECTED = "motion_detected"
+EVENT_MEDIA_STORED = "media_stored"
+
+API_PATH_EVENT_REGEXP = (
     API_PATH_DEVICE_ROOT
-    + r"{device_id:[-:_a-zA-Z0-9]+}"
-    + API_ENDPOINT_MOTION_DETECTION
+    + r"{device_id:[-:_a-zA-Z0-9]+}/"
+    + r"{event:"
+    + f"({EVENT_MOTION_DETECTED}|{EVENT_MEDIA_STORED})"
+    + r"}"
 )
 
 CONF_CLIENT = "client"
@@ -26,8 +30,6 @@ CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE = "motion_detection_webhook_set_over
 DEFAULT_MOTION_DETECTION_WEBHOOK_SET = True
 DEFAULT_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE = False
 DEFAULT_SCAN_INTERVAL = timedelta(seconds=30)
-
-EVENT_MOTION_DETECTED = f"{DOMAIN}.motion_detected"
 
 MOTIONEYE_MANUFACTURER = "motionEye"
 

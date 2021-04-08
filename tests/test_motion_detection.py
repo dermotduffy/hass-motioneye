@@ -13,7 +13,6 @@ from motioneye_client.const import (
 )
 
 from custom_components.motioneye.const import (
-    API_ENDPOINT_MOTION_DETECTION,
     API_PATH_DEVICE_ROOT,
     API_PATH_ROOT,
     CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
@@ -63,7 +62,7 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
     expected_camera[
         KEY_WEB_HOOK_NOTIFICATIONS_URL
-    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detection"
+    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected"
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
@@ -113,7 +112,7 @@ async def test_setup_camera_with_wrong_webhook(
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
     expected_camera[
         KEY_WEB_HOOK_NOTIFICATIONS_URL
-    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detection"
+    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected"
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
@@ -131,17 +130,16 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
         identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)},
     )
 
-    events = async_capture_events(hass, EVENT_MOTION_DETECTED)
+    events = async_capture_events(hass, f"{DOMAIN}.{EVENT_MOTION_DETECTED}")
 
     client = await aiohttp_client(hass.http.app)
     resp = await client.get(
-        API_PATH_DEVICE_ROOT + TEST_CAMERA_DEVICE_ID + API_ENDPOINT_MOTION_DETECTION
+        API_PATH_DEVICE_ROOT + device.id + "/" + EVENT_MOTION_DETECTED
     )
     assert resp.status == HTTP_OK
 
     assert len(events) == 1
     assert events[0].data == {
-        "unique_id": "test:8766_100",
         "name": TEST_CAMERA_NAME,
         "device_id": device.id,
     }
@@ -172,6 +170,6 @@ async def test_bad_query_no_device(
 
     client = await aiohttp_client(hass.http.app)
     resp = await client.get(
-        API_PATH_DEVICE_ROOT + "not-a-real-device" + API_ENDPOINT_MOTION_DETECTION
+        API_PATH_DEVICE_ROOT + "not-a-real-device" + "/" + EVENT_MOTION_DETECTED
     )
     assert resp.status == HTTP_NOT_FOUND
