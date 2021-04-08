@@ -12,8 +12,8 @@ from homeassistant import config_entries, data_entry_flow, setup
 from custom_components.motioneye.const import (
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
-    CONF_MOTION_DETECTION_WEBHOOK_SET,
-    CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+    CONF_WEBHOOK_SET,
+    CONF_WEBHOOK_SET_OVERWRITE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
     DOMAIN,
@@ -241,11 +241,11 @@ async def test_options(hass: HomeAssistantType) -> None:
         result = await hass.config_entries.options.async_configure(
             result["flow_id"],
             user_input={
-                CONF_MOTION_DETECTION_WEBHOOK_SET: True,
-                CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE: True,
+                CONF_WEBHOOK_SET: True,
+                CONF_WEBHOOK_SET_OVERWRITE: True,
             },
         )
         await hass.async_block_till_done()
         assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
-        assert result["data"][CONF_MOTION_DETECTION_WEBHOOK_SET]
-        assert result["data"][CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE]
+        assert result["data"][CONF_WEBHOOK_SET]
+        assert result["data"][CONF_WEBHOOK_SET_OVERWRITE]

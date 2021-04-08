@@ -15,7 +15,7 @@ from motioneye_client.const import (
 from custom_components.motioneye.const import (
     API_PATH_DEVICE_ROOT,
     API_PATH_ROOT,
-    CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+    CONF_WEBHOOK_SET_OVERWRITE,
     DOMAIN,
     EVENT_MOTION_DETECTED,
 )
@@ -97,7 +97,7 @@ async def test_setup_camera_with_wrong_webhook(
         return_value=client,
     ):
         hass.config_entries.async_update_entry(
-            config_entry, options={CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE: True}
+            config_entry, options={CONF_WEBHOOK_SET_OVERWRITE: True}
         )
         await hass.async_block_till_done()
 

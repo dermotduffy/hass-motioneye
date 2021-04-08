@@ -28,12 +28,12 @@ from . import get_motioneye_config_unique_id
 from .const import (  # pylint:disable=unused-import
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
-    CONF_MOTION_DETECTION_WEBHOOK_SET,
-    CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+    CONF_WEBHOOK_SET,
+    CONF_WEBHOOK_SET_OVERWRITE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
-    DEFAULT_MOTION_DETECTION_WEBHOOK_SET,
-    DEFAULT_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+    DEFAULT_WEBHOOK_SET,
+    DEFAULT_WEBHOOK_SET_OVERWRITE,
     DOMAIN,
 )
 
@@ -149,17 +149,17 @@ class MotionEyeOptionsFlow(OptionsFlow):  # type: ignore[misc]
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_MOTION_DETECTION_WEBHOOK_SET,
+                        CONF_WEBHOOK_SET,
                         default=self._config_entry.options.get(
-                            CONF_MOTION_DETECTION_WEBHOOK_SET,
-                            DEFAULT_MOTION_DETECTION_WEBHOOK_SET,
+                            CONF_WEBHOOK_SET,
+                            DEFAULT_WEBHOOK_SET,
                         ),
                     ): bool,
                     vol.Required(
-                        CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+                        CONF_WEBHOOK_SET_OVERWRITE,
                         default=self._config_entry.options.get(
-                            CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
-                            DEFAULT_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+                            CONF_WEBHOOK_SET_OVERWRITE,
+                            DEFAULT_WEBHOOK_SET_OVERWRITE,
                         ),
                     ): bool,
                 }

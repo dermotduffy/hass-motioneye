@@ -67,13 +67,13 @@ from .const import (
     CONF_ADMIN_USERNAME,
     CONF_CLIENT,
     CONF_COORDINATOR,
-    CONF_MOTION_DETECTION_WEBHOOK_SET,
-    CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+    CONF_WEBHOOK_SET,
+    CONF_WEBHOOK_SET_OVERWRITE,
     CONF_ON_UNLOAD,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
-    DEFAULT_MOTION_DETECTION_WEBHOOK_SET,
-    DEFAULT_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+    DEFAULT_WEBHOOK_SET,
+    DEFAULT_WEBHOOK_SET_OVERWRITE,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     EVENT_MOTION_DETECTED,
@@ -197,9 +197,7 @@ async def _add_camera(
         model=MOTIONEYE_MANUFACTURER,
         name=camera[KEY_NAME],
     )
-    if entry.options.get(
-        CONF_MOTION_DETECTION_WEBHOOK_SET, DEFAULT_MOTION_DETECTION_WEBHOOK_SET
-    ):
+    if entry.options.get(CONF_WEBHOOK_SET, DEFAULT_WEBHOOK_SET):
         webhook_url = None
         try:
             webhook_url = f"{get_url(hass)}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}"
@@ -210,8 +208,8 @@ async def _add_camera(
             webhook_url is not None
             and (
                 entry.options.get(
-                    CONF_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
-                    DEFAULT_MOTION_DETECTION_WEBHOOK_SET_OVERWRITE,
+                    CONF_WEBHOOK_SET_OVERWRITE,
+                    DEFAULT_WEBHOOK_SET_OVERWRITE,
                 )
                 or not camera.get(KEY_WEB_HOOK_NOTIFICATIONS_URL)
             )
