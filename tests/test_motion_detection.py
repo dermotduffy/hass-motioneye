@@ -10,6 +10,9 @@ from motioneye_client.const import (
     KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
     KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
     KEY_WEB_HOOK_NOTIFICATIONS_URL,
+    KEY_WEB_HOOK_STORAGE_ENABLED,
+    KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
+    KEY_WEB_HOOK_STORAGE_URL,
 )
 
 from custom_components.motioneye.const import (
@@ -64,7 +67,14 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
         KEY_WEB_HOOK_NOTIFICATIONS_URL
     ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected"
 
+    expected_camera[KEY_WEB_HOOK_STORAGE_ENABLED] = True
+    expected_camera[KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
+    expected_camera[
+        KEY_WEB_HOOK_STORAGE_URL
+    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored"
+
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
+    _LOGGER.error(expected_camera)
 
 
 async def test_setup_camera_with_wrong_webhook(
@@ -81,6 +91,7 @@ async def test_setup_camera_with_wrong_webhook(
     client = create_mock_motioneye_client()
     cameras = copy.deepcopy(TEST_CAMERAS)
     cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_NOTIFICATIONS_URL] = wrong_url
+    cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_STORAGE_URL] = wrong_url
     client.async_get_cameras = AsyncMock(return_value=cameras)
 
     config_entry = create_mock_motioneye_config_entry(hass)
@@ -113,6 +124,12 @@ async def test_setup_camera_with_wrong_webhook(
     expected_camera[
         KEY_WEB_HOOK_NOTIFICATIONS_URL
     ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected"
+
+    expected_camera[KEY_WEB_HOOK_STORAGE_ENABLED] = True
+    expected_camera[KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
+    expected_camera[
+        KEY_WEB_HOOK_STORAGE_URL
+    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored"
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 

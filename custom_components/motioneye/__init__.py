@@ -29,6 +29,9 @@ from motioneye_client.const import (
     KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
     KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
     KEY_WEB_HOOK_NOTIFICATIONS_URL,
+    KEY_WEB_HOOK_STORAGE_ENABLED,
+    KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
+    KEY_WEB_HOOK_STORAGE_URL,
 )
 
 from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
@@ -76,6 +79,7 @@ from .const import (
     DEFAULT_WEBHOOK_SET_OVERWRITE,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    EVENT_MEDIA_STORED,
     EVENT_MOTION_DETECTED,
     MOTIONEYE_MANUFACTURER,
     SERVICE_SET_TEXT_OVERLAY,
@@ -190,6 +194,35 @@ async def _add_camera(
 ) -> None:
     """Add a motionEye camera to hass."""
 
+    def _set_webhook(
+        url: str,
+        key_url: str,
+        key_method: str,
+        key_enabled: str,
+        camera: dict[str, Any],
+    ) -> bool:
+        """Set a web hook."""
+        if (
+            url is not None
+            and (
+                entry.options.get(
+                    CONF_WEBHOOK_SET_OVERWRITE,
+                    DEFAULT_WEBHOOK_SET_OVERWRITE,
+                )
+                or not camera.get(key_url)
+            )
+            and (
+                camera.get(key_enabled, False)
+                or camera.get(key_method) != KEY_HTTP_METHOD_GET
+                or camera.get(key_url) != url
+            )
+        ):
+            camera[key_enabled] = True
+            camera[key_method] = KEY_HTTP_METHOD_GET
+            camera[key_url] = url
+            return True
+        return False
+
     device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, device_id)},
@@ -198,32 +231,26 @@ async def _add_camera(
         name=camera[KEY_NAME],
     )
     if entry.options.get(CONF_WEBHOOK_SET, DEFAULT_WEBHOOK_SET):
-        webhook_url = None
+        base_url = None
         try:
-            webhook_url = f"{get_url(hass)}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}"
+            base_url = get_url(hass)
         except NoURLAvailableError:
             pass
-
-        if (
-            webhook_url is not None
-            and (
-                entry.options.get(
-                    CONF_WEBHOOK_SET_OVERWRITE,
-                    DEFAULT_WEBHOOK_SET_OVERWRITE,
-                )
-                or not camera.get(KEY_WEB_HOOK_NOTIFICATIONS_URL)
-            )
-            and (
-                camera.get(KEY_WEB_HOOK_NOTIFICATIONS_ENABLED, False)
-                or camera.get(KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD)
-                != KEY_HTTP_METHOD_GET
-                or camera.get(KEY_WEB_HOOK_NOTIFICATIONS_URL) != webhook_url
-            )
-        ):
-            camera[KEY_WEB_HOOK_NOTIFICATIONS_ENABLED] = True
-            camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
-            camera[KEY_WEB_HOOK_NOTIFICATIONS_URL] = webhook_url
-            await client.async_set_camera(camera_id, camera)
+        if base_url:
+            if _set_webhook(
+                f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}",
+                KEY_WEB_HOOK_NOTIFICATIONS_URL,
+                KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
+                KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
+                camera,
+            ) | _set_webhook(
+                f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MEDIA_STORED}",
+                KEY_WEB_HOOK_STORAGE_URL,
+                KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
+                KEY_WEB_HOOK_STORAGE_ENABLED,
+                camera,
+            ):
+                await client.async_set_camera(camera_id, camera)
 
     async_dispatcher_send(
         hass,
