@@ -95,7 +95,7 @@ template which was used for the initial skeleton of this component.
 
 ---
 
-[build_badge]: https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Build
+[build_badge]: https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Build?style=flat-square
 [build]: https://github.com/dermotduffy/hass-motioneye/actions/workflows/tests.yaml
 [coverage_badge]: https://img.shields.io/codecov/c/gh/dermotduffy/hass-motioneye?style=flat-square
 [coverage]: https://app.codecov.io/gh/dermotduffy/hass-motioneye/
