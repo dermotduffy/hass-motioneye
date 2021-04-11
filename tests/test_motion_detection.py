@@ -21,6 +21,7 @@ from custom_components.motioneye.const import (
     CONF_WEBHOOK_SET_OVERWRITE,
     DOMAIN,
     EVENT_MOTION_DETECTED,
+    EVENT_FILE_STORED,
 )
 from homeassistant.config import async_process_ha_core_config
 from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK
@@ -58,7 +59,7 @@ WEB_HOOK_FILE_STORED_QUERY_STRING = (
 
 
 async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
-    """Test a basic camera."""
+    """Test a camera with no webhook."""
     await async_process_ha_core_config(
         hass,
         {"internal_url": "http://example.local:8123"},
@@ -95,7 +96,7 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
 async def test_setup_camera_with_wrong_webhook(
     hass: HomeAssistantType,
 ) -> None:
-    """Test a basic camera."""
+    """Test camera with wrong web hook."""
     await async_process_ha_core_config(
         hass,
         {"internal_url": "http://example.local:8123"},
@@ -152,7 +153,7 @@ async def test_setup_camera_with_wrong_webhook(
 
 
 async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
-    """Test a basic camera."""
+    """Test good callbacks."""
     await async_setup_component(hass, "http", {"http": {}})
 
     device_registry = await dr.async_get_registry(hass)
@@ -164,36 +165,32 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
         identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)},
     )
 
-    events = async_capture_events(hass, f"{DOMAIN}.{EVENT_MOTION_DETECTED}")
-
     data = {
         "one": "1",
         "two": "2",
     }
-
     client = await aiohttp_client(hass.http.app)
-    resp = await client.get(
-        API_PATH_DEVICE_ROOT
-        + device.id
-        + "/"
-        + EVENT_MOTION_DETECTED
-        + "?"
-        + "&one=1&two=2"
-    )
-    assert resp.status == HTTP_OK
 
-    assert len(events) == 1
-    assert events[0].data == {
-        "name": TEST_CAMERA_NAME,
-        "device_id": device.id,
-        **data,
-    }
+    for event in (EVENT_MOTION_DETECTED, EVENT_FILE_STORED):
+        events = async_capture_events(hass, f"{DOMAIN}.{event}")
+
+        resp = await client.get(
+            API_PATH_DEVICE_ROOT + device.id + "/" + event + "?" + "&one=1&two=2"
+        )
+        assert resp.status == HTTP_OK
+
+        assert len(events) == 1
+        assert events[0].data == {
+            "name": TEST_CAMERA_NAME,
+            "device_id": device.id,
+            **data,
+        }
 
 
 async def test_bad_query_wrong_url(
     hass: HomeAssistantType, aiohttp_client: Any
 ) -> None:
-    """Test a basic camera."""
+    """Test an incorrect query."""
     await async_setup_component(hass, "http", {"http": {}})
     await setup_mock_motioneye_config_entry(hass)
 
@@ -209,7 +206,7 @@ async def test_bad_query_wrong_url(
 async def test_bad_query_no_device(
     hass: HomeAssistantType, aiohttp_client: Any
 ) -> None:
-    """Test a basic camera."""
+    """Test a correct query with incorrect device."""
     await async_setup_component(hass, "http", {"http": {}})
     await setup_mock_motioneye_config_entry(hass)
 
