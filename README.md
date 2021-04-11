@@ -1,6 +1,6 @@
 # motionEye Home Assistant Integration
 
-<img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/motioneye.png"
+<img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/motioneye.png?raw=true"
      alt="motionEye icon"
      width="15%"
      align="right" />
@@ -20,11 +20,6 @@ and visualization of multiple types of camera.
 
 ## Features
 
-<img style="border: 3px solid #767676;border-radius: 10px;max-width: 250px;width:
-100%;box-sizing: border-box; float: left; margin: 10px 40px 10px 0px;"
-src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/screenshot-motioneye-device.png"
-alt="hass-motioneye screenshot">
-
    * Dynamic motionEye camera addition/removal.
    * View motionEye MJPEG video streams as HA camera entities with no additional configuration.
    * Control major motionEye camera options as HA switch entities.
@@ -34,7 +29,7 @@ alt="hass-motioneye screenshot">
      arbitrary configured [motionEye Action
      Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
 
-<div style="clear: both" />
+<img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/screenshot-motioneye-device.png?raw=true" alt="hass-motioneye screenshot" />
 
 ## Installation
 
