@@ -17,6 +17,16 @@ The motionEye integration allows you to integrate your
 is an open source web-frontend for the motion daemon, used to centralize the management
 and visualization of multiple types of camera.
 
+## Features
+
+   * Dynamic motionEye camera addition/removal.
+   * View motionEye MJPEG video streams as HA camera entities with no additional configuration.
+   * Control major motionEye camera options as HA switch entities.
+   * Camera motion detection events, and file (image or movie) storage events propagate into
+     HA events which can be used in automations.
+   * Custom services to set camera overlay text, to trigger motionEye snapshots, and to perform
+     arbitrary configured [motionEye Action Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
+
 ## Installation
 
 Use [HACS](https://hacs.xyz/) to install.
@@ -186,6 +196,23 @@ data:
 target:
   entity_id: camera.office
 ```
+
+## Long-term intention
+
+The goal is to integrate this `custom_component` into Home Assistant Core (non-HACS)
+integration. This process has an open-timeline because of the large backlog of code
+reviews for Core code submissions, but will probably take at 6-9 months before all of
+the functionality would likely be merged in (i.e. goal is to have it merged by the end
+of 2021).
+
+As part of that codereview process changes may be necessary (e.g. names and
+functionality may change). There no guarantee of seamless migration from HACS -> Core
+for users, although that is obviously preferred.
+
+Long-term, once this functionality is fully in Core, this custom component will not be
+necessary anymore and will be retired. You can track the PRs that are part of this move
+from custom to Core in the [Core Integration Project for
+hass-motioneye](https://github.com/dermotduffy/hass-motioneye/projects/3).
 
 ## Credits
 
