@@ -64,6 +64,18 @@ Notes:
    * If the video streaming switch is turned off, the camera entity will become unavailable (but the rest of the integration will continue to work).
    * As cameras are added or removed to motionEye, devices/entities are automatically added or removed from Home Assistant.
 
+#### Camera MJPEG Streams
+
+In order for the MJPEG streams to function they need to be accessible at
+`<motioneyehost>:<streaming port>`, i.e. Home Assistant will directly connect to the streaming port
+that is configured in the `motionEye` UI (under `Video Streaming`) on the host that the
+motionEye integration is configured to use.
+
+Example:
+   * If this integration is configured to talk to motionEye on host `motioneye` port
+     `8765`, and a camera is configured to stream on port `8081` -- Home Assistant needs to
+     be able to communicate to `motioneye` port `8081`.
+
 ### Events
 
 On receipt of a motion or file stored callbacks, events will be fired which can be used
