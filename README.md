@@ -1,6 +1,6 @@
 # motionEye Home Assistant Integration
 
-<img src="https://github.com/dermotduffy/hass-motioneye/blob/images/motioneye.png"
+<img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/motioneye.png"
      alt="motionEye icon"
      width="15%"
      align="right" />
@@ -22,7 +22,7 @@ and visualization of multiple types of camera.
 
 <img style="border: 3px solid #767676;border-radius: 10px;max-width: 250px;width:
 100%;box-sizing: border-box; float: left; margin: 10px 40px 10px 0px;"
-src="https://github.com/dermotduffy/hass-motioneye/blob/images/screenshot-motioneye-device.png"
+src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/screenshot-motioneye-device.png"
 alt="hass-motioneye screenshot">
 
    * Dynamic motionEye camera addition/removal.
