@@ -17,6 +17,7 @@ API_PATH_EVENT_REGEXP = (
     + r"}"
 )
 
+CONF_ACTION = "action"
 CONF_CLIENT = "client"
 CONF_COORDINATOR = "coordinator"
 CONF_ON_UNLOAD = "on_unload"
@@ -34,6 +35,8 @@ DEFAULT_SCAN_INTERVAL = timedelta(seconds=30)
 MOTIONEYE_MANUFACTURER = "motionEye"
 
 SERVICE_SET_TEXT_OVERLAY = "set_text_overlay"
+SERVICE_ACTION = "action"
+SERVICE_SNAPSHOT = "snapshot"
 
 SIGNAL_CAMERA_ADD = f"{DOMAIN}_camera_add_signal." "{}"
 SIGNAL_CAMERA_REMOVE = f"{DOMAIN}_camera_remove_signal." "{}"

@@ -16,6 +16,7 @@ import voluptuous as vol
 from motioneye_client.const import (
     KEY_CAMERAS,
     KEY_ID,
+    KEY_ACTION_SNAPSHOT,
     KEY_NAME,
     KEY_TEXT_OVERLAY_CAMERA_NAME,
     KEY_TEXT_OVERLAY_CUSTOM_TEXT,
@@ -85,6 +86,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .const import (
     API_PATH_DEVICE_ROOT,
     API_PATH_EVENT_REGEXP,
+    CONF_ACTION,
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
     CONF_CLIENT,
@@ -101,6 +103,8 @@ from .const import (
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
     MOTIONEYE_MANUFACTURER,
+    SERVICE_ACTION,
+    SERVICE_SNAPSHOT,
     SERVICE_SET_TEXT_OVERLAY,
     SIGNAL_CAMERA_ADD,
 )
@@ -465,18 +469,26 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-SCHEMA_TEXT_OVERLAY = vol.In(
-    [
-        KEY_TEXT_OVERLAY_DISABLED,
-        KEY_TEXT_OVERLAY_TIMESTAMP,
-        KEY_TEXT_OVERLAY_CUSTOM_TEXT,
-        KEY_TEXT_OVERLAY_CAMERA_NAME,
-    ]
-)
-
-
 class MotionEyeServices:
     """Class that holds motionEye services that should be published to hass."""
+
+    SCHEMA_TEXT_OVERLAY = vol.In(
+        [
+            KEY_TEXT_OVERLAY_DISABLED,
+            KEY_TEXT_OVERLAY_TIMESTAMP,
+            KEY_TEXT_OVERLAY_CUSTOM_TEXT,
+            KEY_TEXT_OVERLAY_CAMERA_NAME,
+        ]
+    )
+
+    SCHEMA_DEVICE_OR_ENTITIES = {
+        vol.Optional(ATTR_DEVICE_ID): vol.All(cv.ensure_list, [cv.string]),
+        vol.Optional(ATTR_ENTITY_ID): cv.entity_ids,
+    }
+
+    SERVICE_TO_ACTION = {
+        SERVICE_SNAPSHOT: KEY_ACTION_SNAPSHOT,
+    }
 
     def __init__(self, hass: HomeAssistant):
         """Initialize with hass object."""
@@ -491,11 +503,10 @@ class MotionEyeServices:
             self._async_set_text_overlay,
             schema=vol.All(
                 {
-                    vol.Optional(ATTR_DEVICE_ID): vol.All(cv.ensure_list, [cv.string]),
-                    vol.Optional(ATTR_ENTITY_ID): cv.entity_ids,
-                    vol.Optional(KEY_TEXT_OVERLAY_LEFT): SCHEMA_TEXT_OVERLAY,
+                    **self.SCHEMA_DEVICE_OR_ENTITIES,
+                    vol.Optional(KEY_TEXT_OVERLAY_LEFT): self.SCHEMA_TEXT_OVERLAY,
                     vol.Optional(KEY_TEXT_OVERLAY_CUSTOM_TEXT_LEFT): cv.string,
-                    vol.Optional(KEY_TEXT_OVERLAY_RIGHT): SCHEMA_TEXT_OVERLAY,
+                    vol.Optional(KEY_TEXT_OVERLAY_RIGHT): self.SCHEMA_TEXT_OVERLAY,
                     vol.Optional(KEY_TEXT_OVERLAY_CUSTOM_TEXT_RIGHT): cv.string,
                 },
                 cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_ENTITY_ID),
@@ -505,6 +516,31 @@ class MotionEyeServices:
                     KEY_TEXT_OVERLAY_RIGHT,
                     KEY_TEXT_OVERLAY_CUSTOM_TEXT_RIGHT,
                 ),
+            ),
+        )
+        self._hass.services.async_register(
+            DOMAIN,
+            SERVICE_ACTION,
+            self._async_action,
+            schema=vol.All(
+                {
+                    **self.SCHEMA_DEVICE_OR_ENTITIES,
+                    vol.Required(CONF_ACTION): cv.string,
+                },
+                cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_ENTITY_ID),
+            ),
+        )
+
+        # Wrapper service calls for snapshot.
+        self._hass.services.async_register(
+            DOMAIN,
+            SERVICE_SNAPSHOT,
+            self._async_action,
+            schema=vol.All(
+                {
+                    **self.SCHEMA_DEVICE_OR_ENTITIES,
+                },
+                cv.has_at_least_one_key(ATTR_DEVICE_ID, ATTR_ENTITY_ID),
             ),
         )
 
@@ -544,10 +580,7 @@ class MotionEyeServices:
     async def _async_set_text_overlay(self, service: ServiceCall) -> None:
         """Set camera text overlay."""
         cameras = await self._get_clients_and_camera_indices_from_request(service)
-
-        if not cameras:
-            return
-        for client, camera_id in cameras:
+        for client, camera_id in cameras or {}:
             camera = await client.async_get_camera(camera_id)
             if not camera:
                 continue
@@ -566,6 +599,18 @@ class MotionEyeServices:
                     )
 
             await client.async_set_camera(camera_id, camera)
+
+    async def _async_action(self, service: ServiceCall) -> None:
+        """Perform a motionEye action."""
+        cameras = await self._get_clients_and_camera_indices_from_request(service)
+        for client, camera_id in cameras or {}:
+            await client.async_action(
+                camera_id,
+                (
+                    self.SERVICE_TO_ACTION.get(service.service)
+                    or service.data[CONF_ACTION]
+                ),
+            )
 
 
 class MotionEyeView(HomeAssistantView):  # type: ignore[misc]

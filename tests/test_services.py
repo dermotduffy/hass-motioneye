@@ -13,7 +13,13 @@ from motioneye_client.const import (
 import pytest
 import voluptuous as vol
 
-from custom_components.motioneye.const import DOMAIN, SERVICE_SET_TEXT_OVERLAY
+from custom_components.motioneye.const import (
+    CONF_ACTION,
+    DOMAIN,
+    SERVICE_ACTION,
+    SERVICE_SNAPSHOT,
+    SERVICE_SET_TEXT_OVERLAY,
+)
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import HomeAssistantType
@@ -158,3 +164,29 @@ async def test_text_overlay_no_such_camera(hass: HomeAssistantType) -> None:
     await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
     await hass.async_block_till_done()
     assert not client.async_set_camera.called
+
+
+async def test_action(hass: HomeAssistantType) -> None:
+    """Test an action."""
+    client = create_mock_motioneye_client()
+    await setup_mock_motioneye_config_entry(hass, client=client)
+
+    data = {
+        ATTR_ENTITY_ID: TEST_CAMERA_ENTITY_ID,
+        CONF_ACTION: "foo",
+    }
+    await hass.services.async_call(DOMAIN, SERVICE_ACTION, data)
+    await hass.async_block_till_done()
+    assert client.async_action.call_args == call(TEST_CAMERA_ID, data[CONF_ACTION])
+
+
+async def test_snapshot(hass: HomeAssistantType) -> None:
+    """Test snapshot."""
+    client = create_mock_motioneye_client()
+    await setup_mock_motioneye_config_entry(hass, client=client)
+
+    data = {ATTR_ENTITY_ID: TEST_CAMERA_ENTITY_ID}
+
+    await hass.services.async_call(DOMAIN, SERVICE_SNAPSHOT, data)
+    await hass.async_block_till_done()
+    assert client.async_action.call_args == call(TEST_CAMERA_ID, "snapshot")
