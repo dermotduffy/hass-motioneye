@@ -7,13 +7,13 @@ API_PATH_ROOT = f"/api/{DOMAIN}"
 API_PATH_DEVICE_ROOT = f"{API_PATH_ROOT}/device/"
 
 EVENT_MOTION_DETECTED = "motion_detected"
-EVENT_MEDIA_STORED = "media_stored"
+EVENT_FILE_STORED = "file_stored"
 
 API_PATH_EVENT_REGEXP = (
     API_PATH_DEVICE_ROOT
     + r"{device_id:[-:_a-zA-Z0-9]+}/"
     + r"{event:"
-    + f"({EVENT_MOTION_DETECTED}|{EVENT_MEDIA_STORED})"
+    + f"({EVENT_MOTION_DETECTED}|{EVENT_FILE_STORED})"
     + r"}"
 )
 

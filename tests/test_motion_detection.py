@@ -51,7 +51,7 @@ WEB_HOOK_MOTION_DETECTED_QUERY_STRING = (
     "&threshold=%o&width=%w"
 )
 
-WEB_HOOK_MEDIA_STORED_QUERY_STRING = (
+WEB_HOOK_FILE_STORED_QUERY_STRING = (
     "camera_id=%t&event=%v&file_path=%f&file_type=%n&fps=%{fps}&frame_number=%q"
     "&height=%h&host=%{host}&motion_version=%{ver}&noise_level=%N&threshold=%o&width=%w"
 )
@@ -84,8 +84,8 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
     expected_camera[KEY_WEB_HOOK_STORAGE_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
     expected_camera[KEY_WEB_HOOK_STORAGE_URL] = (
-        f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored?"
-        f"{WEB_HOOK_MEDIA_STORED_QUERY_STRING}"
+        f"http://example.local:8123/api/motioneye/device/{device.id}/file_stored?"
+        f"{WEB_HOOK_FILE_STORED_QUERY_STRING}"
     )
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
@@ -144,8 +144,8 @@ async def test_setup_camera_with_wrong_webhook(
     expected_camera[KEY_WEB_HOOK_STORAGE_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
     expected_camera[KEY_WEB_HOOK_STORAGE_URL] = (
-        f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored?"
-        f"{WEB_HOOK_MEDIA_STORED_QUERY_STRING}"
+        f"http://example.local:8123/api/motioneye/device/{device.id}/file_stored?"
+        f"{WEB_HOOK_FILE_STORED_QUERY_STRING}"
     )
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)

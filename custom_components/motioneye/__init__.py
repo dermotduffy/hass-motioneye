@@ -98,7 +98,7 @@ from .const import (
     DEFAULT_WEBHOOK_SET_OVERWRITE,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
-    EVENT_MEDIA_STORED,
+    EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
     MOTIONEYE_MANUFACTURER,
     SERVICE_SET_TEXT_OVERLAY,
@@ -129,7 +129,7 @@ EVENT_MOTION_DETECTED_KEYS = [
     KEY_WEB_HOOK_CS_MOTION_VERSION,
 ]
 
-EVENT_MEDIA_STORED_KEYS = [
+EVENT_FILE_STORED_KEYS = [
     KEY_WEB_HOOK_CS_EVENT,
     KEY_WEB_HOOK_CS_FRAME_NUMBER,
     KEY_WEB_HOOK_CS_CAMERA_ID,
@@ -308,8 +308,8 @@ async def _add_camera(
                 camera,
             ) | _set_webhook(
                 _build_url(
-                    f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MEDIA_STORED}",
-                    EVENT_MEDIA_STORED_KEYS,
+                    f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_FILE_STORED}",
+                    EVENT_FILE_STORED_KEYS,
                 ),
                 KEY_WEB_HOOK_STORAGE_URL,
                 KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
