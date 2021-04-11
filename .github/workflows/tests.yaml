@@ -1,5 +1,5 @@
 ---
-name: Build / Test / Lint
+name: Build
 
 on:
   push:
@@ -10,6 +10,7 @@ on:
   pull_request:
   schedule:
     - cron: "17 6 * * *"
+  workflow_dispatch:
 
 env:
   DEFAULT_PYTHON: 3.9
