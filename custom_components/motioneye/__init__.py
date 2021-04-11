@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from multidict import MultiDictProxy
 import re
 from typing import cast, Any, Callable
-
 from aiohttp import web
 from motioneye_client.client import (
     MotionEyeClient,
@@ -32,6 +32,25 @@ from motioneye_client.const import (
     KEY_WEB_HOOK_STORAGE_ENABLED,
     KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
     KEY_WEB_HOOK_STORAGE_URL,
+    KEY_WEB_HOOK_CONVERSION_SPECIFIERS,
+    KEY_WEB_HOOK_CS_EVENT,
+    KEY_WEB_HOOK_CS_FRAME_NUMBER,
+    KEY_WEB_HOOK_CS_CAMERA_ID,
+    KEY_WEB_HOOK_CS_CHANGED_PIXELS,
+    KEY_WEB_HOOK_CS_NOISE_LEVEL,
+    KEY_WEB_HOOK_CS_WIDTH,
+    KEY_WEB_HOOK_CS_HEIGHT,
+    KEY_WEB_HOOK_CS_MOTION_WIDTH,
+    KEY_WEB_HOOK_CS_MOTION_HEIGHT,
+    KEY_WEB_HOOK_CS_MOTION_CENTER_X,
+    KEY_WEB_HOOK_CS_MOTION_CENTER_Y,
+    KEY_WEB_HOOK_CS_FILE_PATH,
+    KEY_WEB_HOOK_CS_FILE_TYPE,
+    KEY_WEB_HOOK_CS_THRESHOLD,
+    KEY_WEB_HOOK_CS_DESPECKLE_LABELS,
+    KEY_WEB_HOOK_CS_FPS,
+    KEY_WEB_HOOK_CS_HOST,
+    KEY_WEB_HOOK_CS_MOTION_VERSION,
 )
 
 from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
@@ -90,6 +109,40 @@ _LOGGER = logging.getLogger(__name__)
 
 REGEXP_DEVICE_UNIQUE_ID = re.compile(r"^(?P<host>[^:]+):(?P<port>\d+)_(?P<index>\d+)$")
 PLATFORMS = [CAMERA_DOMAIN, SWITCH_DOMAIN]
+
+EVENT_MOTION_DETECTED_KEYS = [
+    KEY_WEB_HOOK_CS_EVENT,
+    KEY_WEB_HOOK_CS_FRAME_NUMBER,
+    KEY_WEB_HOOK_CS_CAMERA_ID,
+    KEY_WEB_HOOK_CS_CHANGED_PIXELS,
+    KEY_WEB_HOOK_CS_NOISE_LEVEL,
+    KEY_WEB_HOOK_CS_WIDTH,
+    KEY_WEB_HOOK_CS_HEIGHT,
+    KEY_WEB_HOOK_CS_MOTION_WIDTH,
+    KEY_WEB_HOOK_CS_MOTION_HEIGHT,
+    KEY_WEB_HOOK_CS_MOTION_CENTER_X,
+    KEY_WEB_HOOK_CS_MOTION_CENTER_Y,
+    KEY_WEB_HOOK_CS_THRESHOLD,
+    KEY_WEB_HOOK_CS_DESPECKLE_LABELS,
+    KEY_WEB_HOOK_CS_FPS,
+    KEY_WEB_HOOK_CS_HOST,
+    KEY_WEB_HOOK_CS_MOTION_VERSION,
+]
+
+EVENT_MEDIA_STORED_KEYS = [
+    KEY_WEB_HOOK_CS_EVENT,
+    KEY_WEB_HOOK_CS_FRAME_NUMBER,
+    KEY_WEB_HOOK_CS_CAMERA_ID,
+    KEY_WEB_HOOK_CS_NOISE_LEVEL,
+    KEY_WEB_HOOK_CS_WIDTH,
+    KEY_WEB_HOOK_CS_HEIGHT,
+    KEY_WEB_HOOK_CS_FILE_PATH,
+    KEY_WEB_HOOK_CS_FILE_TYPE,
+    KEY_WEB_HOOK_CS_THRESHOLD,
+    KEY_WEB_HOOK_CS_FPS,
+    KEY_WEB_HOOK_CS_HOST,
+    KEY_WEB_HOOK_CS_MOTION_VERSION,
+]
 
 
 def create_motioneye_client(
@@ -203,25 +256,32 @@ async def _add_camera(
     ) -> bool:
         """Set a web hook."""
         if (
-            url is not None
-            and (
-                entry.options.get(
-                    CONF_WEBHOOK_SET_OVERWRITE,
-                    DEFAULT_WEBHOOK_SET_OVERWRITE,
-                )
-                or not camera.get(key_url)
+            entry.options.get(
+                CONF_WEBHOOK_SET_OVERWRITE,
+                DEFAULT_WEBHOOK_SET_OVERWRITE,
             )
-            and (
-                camera.get(key_enabled, False)
-                or camera.get(key_method) != KEY_HTTP_METHOD_GET
-                or camera.get(key_url) != url
-            )
+            or not camera.get(key_url)
+        ) and (
+            camera.get(key_enabled, False)
+            or camera.get(key_method) != KEY_HTTP_METHOD_GET
+            or camera.get(key_url) != url
         ):
             camera[key_enabled] = True
             camera[key_method] = KEY_HTTP_METHOD_GET
             camera[key_url] = url
             return True
         return False
+
+    def _build_url(base: str, keys: list[str]) -> str:
+        """Build a motionEye webhook URL."""
+
+        return (
+            base
+            + "?"
+            + "&".join(
+                [f"{k}={KEY_WEB_HOOK_CONVERSION_SPECIFIERS[k]}" for k in sorted(keys)]
+            )
+        )
 
     device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
@@ -238,13 +298,19 @@ async def _add_camera(
             pass
         if base_url:
             if _set_webhook(
-                f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}",
+                _build_url(
+                    f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}",
+                    EVENT_MOTION_DETECTED_KEYS,
+                ),
                 KEY_WEB_HOOK_NOTIFICATIONS_URL,
                 KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
                 KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
                 camera,
             ) | _set_webhook(
-                f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MEDIA_STORED}",
+                _build_url(
+                    f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MEDIA_STORED}",
+                    EVENT_MEDIA_STORED_KEYS,
+                ),
                 KEY_WEB_HOOK_STORAGE_URL,
                 KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
                 KEY_WEB_HOOK_STORAGE_ENABLED,
@@ -512,7 +578,7 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
                     status_code=HTTP_NOT_FOUND,
                 ),
             )
-        await self._fire_event(hass, event, device)
+        await self._fire_event(hass, event, device, request.query)
         return cast(web.Response, self.json_message({}))
 
     async def _fire_event(
@@ -520,6 +586,7 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
         hass: HomeAssistant,
         event_type: str,
         device: dr.DeviceEntry,
+        data: MultiDictProxy[str],
     ) -> None:
         """Fire a Home Assistant event."""
         hass.bus.async_fire(
@@ -527,5 +594,6 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
             {
                 CONF_DEVICE_ID: device.id,
                 CONF_NAME: device.name,
+                **data,
             },
         )

@@ -44,6 +44,19 @@ from pytest_homeassistant_custom_component.common import async_capture_events
 _LOGGER = logging.getLogger(__name__)
 
 
+WEB_HOOK_MOTION_DETECTED_QUERY_STRING = (
+    "camera_id=%t&changed_pixels=%D&despeckle_labels=%Q&event=%v&fps=%{fps}"
+    "&frame_number=%q&height=%h&host=%{host}&motion_center_x=%K&motion_center_y=%L"
+    "&motion_height=%J&motion_version=%{ver}&motion_width=%i&noise_level=%N"
+    "&threshold=%o&width=%w"
+)
+
+WEB_HOOK_MEDIA_STORED_QUERY_STRING = (
+    "camera_id=%t&event=%v&file_path=%f&file_type=%n&fps=%{fps}&frame_number=%q"
+    "&height=%h&host=%{host}&motion_version=%{ver}&noise_level=%N&threshold=%o&width=%w"
+)
+
+
 async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
     """Test a basic camera."""
     await async_process_ha_core_config(
@@ -63,15 +76,17 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
     expected_camera = copy.deepcopy(TEST_CAMERA)
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
-    expected_camera[
-        KEY_WEB_HOOK_NOTIFICATIONS_URL
-    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected"
+    expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_URL] = (
+        f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected?"
+        f"{WEB_HOOK_MOTION_DETECTED_QUERY_STRING}"
+    )
 
     expected_camera[KEY_WEB_HOOK_STORAGE_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
-    expected_camera[
-        KEY_WEB_HOOK_STORAGE_URL
-    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored"
+    expected_camera[KEY_WEB_HOOK_STORAGE_URL] = (
+        f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored?"
+        f"{WEB_HOOK_MEDIA_STORED_QUERY_STRING}"
+    )
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
     _LOGGER.error(expected_camera)
@@ -121,15 +136,17 @@ async def test_setup_camera_with_wrong_webhook(
     expected_camera = copy.deepcopy(TEST_CAMERA)
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD] = KEY_HTTP_METHOD_GET
-    expected_camera[
-        KEY_WEB_HOOK_NOTIFICATIONS_URL
-    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected"
+    expected_camera[KEY_WEB_HOOK_NOTIFICATIONS_URL] = (
+        f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected?"
+        f"{WEB_HOOK_MOTION_DETECTED_QUERY_STRING}"
+    )
 
     expected_camera[KEY_WEB_HOOK_STORAGE_ENABLED] = True
     expected_camera[KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
-    expected_camera[
-        KEY_WEB_HOOK_STORAGE_URL
-    ] = f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored"
+    expected_camera[KEY_WEB_HOOK_STORAGE_URL] = (
+        f"http://example.local:8123/api/motioneye/device/{device.id}/media_stored?"
+        f"{WEB_HOOK_MEDIA_STORED_QUERY_STRING}"
+    )
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
@@ -149,9 +166,19 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
 
     events = async_capture_events(hass, f"{DOMAIN}.{EVENT_MOTION_DETECTED}")
 
+    data = {
+        "one": "1",
+        "two": "2",
+    }
+
     client = await aiohttp_client(hass.http.app)
     resp = await client.get(
-        API_PATH_DEVICE_ROOT + device.id + "/" + EVENT_MOTION_DETECTED
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + "/"
+        + EVENT_MOTION_DETECTED
+        + "?"
+        + "&one=1&two=2"
     )
     assert resp.status == HTTP_OK
 
@@ -159,6 +186,7 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
     assert events[0].data == {
         "name": TEST_CAMERA_NAME,
         "device_id": device.id,
+        **data,
     }
 
 
