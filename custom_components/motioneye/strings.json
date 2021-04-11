@@ -28,7 +28,7 @@
       "init": {
         "data": {
           "webhook_set": "Configure motionEye webhooks to report events to Home Assistant",
-          "webhook_set_overwrite": "Overwrite webhooks if they already exist"
+          "webhook_set_overwrite": "Overwrite unrecognized webhooks"
         }
       }
     }

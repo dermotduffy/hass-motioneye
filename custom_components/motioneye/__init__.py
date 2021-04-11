@@ -144,6 +144,9 @@ EVENT_FILE_STORED_KEYS = [
     KEY_WEB_HOOK_CS_MOTION_VERSION,
 ]
 
+HASS_MOTIONEYE_WEB_HOOK_SENTINEL_KEY = "src"
+HASS_MOTIONEYE_WEB_HOOK_SENTINEL_VALUE = "hass-motioneye"
+
 
 def create_motioneye_client(
     *args: Any,
@@ -247,6 +250,13 @@ async def _add_camera(
 ) -> None:
     """Add a motionEye camera to hass."""
 
+    def _is_recognized_web_hook(url: str) -> bool:
+        """Determine whether this integration set a web hook."""
+        return (
+            f"{HASS_MOTIONEYE_WEB_HOOK_SENTINEL_KEY}={HASS_MOTIONEYE_WEB_HOOK_SENTINEL_VALUE}"
+            in url
+        )
+
     def _set_webhook(
         url: str,
         key_url: str,
@@ -261,6 +271,7 @@ async def _add_camera(
                 DEFAULT_WEBHOOK_SET_OVERWRITE,
             )
             or not camera.get(key_url)
+            or _is_recognized_web_hook(camera[key_url])
         ) and (
             camera.get(key_enabled, False)
             or camera.get(key_method) != KEY_HTTP_METHOD_GET
@@ -281,6 +292,8 @@ async def _add_camera(
             + "&".join(
                 [f"{k}={KEY_WEB_HOOK_CONVERSION_SPECIFIERS[k]}" for k in sorted(keys)]
             )
+            + f"&{HASS_MOTIONEYE_WEB_HOOK_SENTINEL_KEY}"
+            + f"={HASS_MOTIONEYE_WEB_HOOK_SENTINEL_VALUE}"
         )
 
     device = device_registry.async_get_or_create(
