@@ -1,5 +1,10 @@
 # motionEye Home Assistant Integration
 
+<img src="https://github.com/dermotduffy/hass-motioneye/blob/images/motioneye.png"
+     alt="motionEye icon"
+     width="15%"
+     align="right" />
+
 [![GitHub Release][releases_badge]][releases]
 [![Build Status][build_badge]][build]
 [![Test Coverage][coverage_badge]][coverage]
@@ -7,17 +12,18 @@
 [![hacs][hacs_badge]][hacs]
 [![BuyMeCoffee][buymecoffee_badge]][buymecoffee]
 
-<img src="https://github.com/dermotduffy/hass-motioneye/blob/main/motioneye.png"
-     alt="motionEye icon"
-     width="10%"
-     align="right" />
-
 The motionEye integration allows you to integrate your
 [motionEye](https://github.com/ccrisan/motioneye) server into Home Assistant. motionEye
 is an open source web-frontend for the motion daemon, used to centralize the management
 and visualization of multiple types of camera.
 
+
 ## Features
+
+<img style="border: 3px solid #767676;border-radius: 10px;max-width: 250px;width:
+100%;box-sizing: border-box; float: left; margin: 10px 40px 10px 0px;"
+src="https://github.com/dermotduffy/hass-motioneye/blob/images/screenshot-motioneye-device.png"
+alt="hass-motioneye screenshot">
 
    * Dynamic motionEye camera addition/removal.
    * View motionEye MJPEG video streams as HA camera entities with no additional configuration.
@@ -25,7 +31,10 @@ and visualization of multiple types of camera.
    * Camera motion detection events, and file (image or movie) storage events propagate into
      HA events which can be used in automations.
    * Custom services to set camera overlay text, to trigger motionEye snapshots, and to perform
-     arbitrary configured [motionEye Action Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
+     arbitrary configured [motionEye Action
+     Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
+
+<div style="clear: both" />
 
 ## Installation
 
@@ -245,7 +254,7 @@ template which was used for the initial skeleton of this component.
 [buymecoffee_badge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat-square
 [hacs]: https://hacs.xyz
 [hacs_badge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square
-[motioneyelogo]: motioneye.png
+[motioneyelogo]: images/motioneye.png
 [license_badge]: https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat-square
 [releases_badge]: https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=flat-square
 [releases]: https://github.com/dermotduffy/hass-motioneye/releases
