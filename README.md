@@ -37,9 +37,9 @@ Home Assistant > Configuration > Integrations > motionEye > Options
   Assistant. If this option is disabled, no motion detected or file stored events will
   be generated unless the webhooks are manually configured.
 * **Overwrite unrecognized webhooks** [default=`False`]: Whether or not to overwrite
-  webhooks that are already configured and are not recognized as belonging to this integration.
-
-
+  webhooks that are already configured and are not recognized as belonging to this
+  integration (web hooks are deemed to belong to this integration if they contain
+  `src=hass-motioneye` in the query string).
 
 ## Usage
 
@@ -65,7 +65,7 @@ as make sense for that event type.
 
 Note: Any additional `&key=value` pairs added manually to the motionEye webhook (in the
 motionEye UI) will automatically propagate to the event data. If you manually tweak the
-web hook, ensure the [Overwrite webhooks option](#options) is disabled to ensure your changes persist.
+web hook, remove the `src=hass-motioneye` parameter or the web hook will be overwritten.
 #### Example motion detected event
 
 ```json
