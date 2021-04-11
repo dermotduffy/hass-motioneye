@@ -25,6 +25,22 @@ Use [HACS](https://hacs.xyz/) to install.
 Home Assistant > HACS > Integrations > "Explore & Add Integrations" > motionEye
 ```
 
+<a name="options"></a>
+## Options
+
+```
+Home Assistant > Configuration > Integrations > motionEye > Options
+```
+
+* **Configure motionEye webhooks to report events to Home Assistant** [default=`True`]:
+  Whether or not motionEye webhooks should be configured to callback into Home
+  Assistant. If this option is disabled, no motion detected or file stored events will
+  be generated unless the webhooks are manually configured.
+* **Overwrite unrecognized webhooks** [default=`False`]: Whether or not to overwrite
+  webhooks that are already configured and are not recognized as belonging to this integration.
+
+
+
 ## Usage
 
 ### Entities
@@ -40,19 +56,76 @@ Notes:
 
 ### Events
 
-On receipt of a motion callback, an event will be fired which can be used in automations (etc). Example event:
+On receipt of a motion or file stored callbacks, events will be fired which can be used
+in automations (etc). All event data includes the Home Assistant `device_id` for this
+motionEye camera device, and the Home Assistant device `name`. Event data also includes
+as many [Motion Conversion
+Specifiers](https://motion-project.github.io/motion_config.html#conversion_specifiers)
+as make sense for that event type.
+
+Note: Any additional `&key=value` pairs added manually to the motionEye webhook (in the
+motionEye UI) will automatically propagate to the event data. If you manually tweak the
+web hook, ensure the [Overwrite webhooks option](#options) is disabled to ensure your changes persist.
+#### Example motion detected event
 
 ```json
 {
     "event_type": "motioneye.motion_detected",
     "data": {
-        "device_id": "localhost:8765_2",
-        "name": "Office"
+        "device_id": "662aa1c77657dbc4af836abcdf80000a",
+        "name": "Office",
+        "camera_id": "2",
+        "changed_pixels": "99354",
+        "despeckle_labels": "55",
+        "event": "02",
+        "fps": "24",
+        "frame_number": "10",
+        "height": "1080",
+        "host": "6aa7a495490c",
+        "motion_center_x": "314",
+        "motion_center_y": "565",
+        "motion_height": "730",
+        "motion_version": "4.2.2",
+        "motion_width": "252",
+        "noise_level": "12",
+        "threshold": "20736",
+        "width": "1920"
     },
     "origin": "LOCAL",
-    "time_fired": "2021-03-05T02:11:07.334122+00:00",
+    "time_fired": "2021-04-11T04:25:41.106964+00:00",
     "context": {
-        "id": "ba692123787e03911779baa36ee1d333",
+        "id": "0320bb897aa3656dbb02affddce322f2",
+        "parent_id": null,
+        "user_id": null
+    }
+}
+```
+
+#### Example file stored event
+
+```json
+{
+    "event_type": "motioneye.file_stored",
+    "data": {
+        "device_id": "662aa1c77657dbc4af836abcdf80000a",
+        "name": "Office",
+        "camera_id": "2",
+        "event": "03",
+        "file_path": "/var/lib/motioneye/Camera2/2021-04-10/21-27-53.jpg",
+        "file_type": "1",
+        "fps": "25",
+        "frame_number": "21",
+        "height": "1080",
+        "host": "6aa7a495490c",
+        "motion_version": "4.2.2",
+        "noise_level": "12",
+        "threshold": "20736",
+        "width": "1920"
+    },
+    "origin": "LOCAL",
+    "time_fired": "2021-04-11T04:27:54.528671+00:00",
+    "context": {
+        "id": "0358cac9457e3e3a2039da8c998e4c25",
         "parent_id": null,
         "user_id": null
     }
