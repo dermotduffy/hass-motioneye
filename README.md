@@ -3,7 +3,8 @@
 <img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/motioneye.png?raw=true"
      alt="motionEye icon"
      width="15%"
-     align="right" />
+     align="right"
+     style="float: right; margin: 10px 0px 20px 20px;" />
 
 [![GitHub Release][releases_badge]][releases]
 [![Build Status][build_badge]][build]
@@ -29,6 +30,8 @@ and visualization of multiple types of camera.
      arbitrary configured [motionEye Action
      Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
 
+## Screenshot
+
 <img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/screenshot-motioneye-device.png?raw=true" alt="hass-motioneye screenshot" />
 
 ## Installation
@@ -38,6 +41,17 @@ Use [HACS](https://hacs.xyz/) to install.
 ```
 Home Assistant > HACS > Integrations > "Explore & Add Integrations" > motionEye
 ```
+
+### Configuration Variables
+
+|Variable|Description|
+| --------------- | ------------------------------------------------------------------------- |
+|host|The hostname of the motionEye server|
+|port|The port of the motionEye server|
+|admin_username|The username of the motionEye administrative account, used for changing camera settings.|
+|admin_password|The password of the motionEye administrative account.|
+|surveillance_username|The username of the motionEye surveillance user, used to authenticate video streams.|
+|surveillance_password|The password of the motionEye surveillance account.|
 
 <a name="options"></a>
 ## Options
