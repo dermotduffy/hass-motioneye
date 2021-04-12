@@ -36,10 +36,14 @@ and visualization of multiple types of camera.
 
 ## Installation
 
-Use [HACS](https://hacs.xyz/) to install.
-
+   * Use [HACS](https://hacs.xyz/) to install to repository:
 ```
 Home Assistant > HACS > Integrations > "Explore & Add Integrations" > motionEye
+```
+   * Restart Home Assistant.
+   * Then install the integration:
+```
+Home Assistant > Configuration > Integrations > Add Integration -> motionEye
 ```
 
 ### Configuration Variables
