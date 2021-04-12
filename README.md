@@ -174,6 +174,20 @@ web hook, remove the `src=hass-motioneye` parameter or the web hook will be over
 
 ### Services
 
+All services accept either a comma-separated list of entities in `entity_id` or a hex
+`device_id`. The `device_id` for a device can be found by visiting the device page:
+
+
+```
+Home Assistant > Configuration > Devices > "Search Devices"
+```
+
+Upon opening a given device page, the `device_id` can be found at the end of the URL:
+
+```
+https://<home_assistant>/config/devices/device/<device_id>
+```
+
 #### motioneye.snapshot
 
 Trigger a camera snapshot (e.g. saving an image to disk).
@@ -225,6 +239,21 @@ data:
   custom_right_text: "Alarm armed"
 target:
   entity_id: camera.office
+```
+
+## Debugging
+
+### Debug Logging
+
+To enable debug logging for both the custom component and the underlying client library,
+enable the following in your `configuration.yaml` and then restart:
+
+```yaml
+logger:
+  default: warning
+  logs:
+    motioneye_client: debug
+    custom_components.motioneye: debug
 ```
 
 ## Long-term intention
