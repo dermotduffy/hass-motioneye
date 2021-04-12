@@ -273,6 +273,24 @@ necessary anymore and will be retired. You can track the PRs that are part of th
 from custom to Core in the [Core Integration Project for
 hass-motioneye](https://github.com/dermotduffy/hass-motioneye/projects/3).
 
+## Development
+
+### Updating underlying libraries
+
+   * Update [requirements_dev.txt](https://github.com/dermotduffy/hass-motioneye/blob/main/requirements_dev.txt)
+      * Used for CI building.
+   * Update [custom_components/motioneye/manifest.json](https://github.com/dermotduffy/hass-motioneye/blob/main/custom_components/motioneye/manifest.json)
+      * Used for Home Assistant.
+   * Update [.pre-commit-config.yaml](https://github.com/dermotduffy/hass-motioneye/blob/main/.pre-commit-config.yaml)
+      * Used for mypy type checking.
+
+### Cutting a new release
+
+* Update
+  [custom_components/motioneye/manifest.json](https://github.com/dermotduffy/hass-motioneye/blob/main/custom_components/motioneye/manifest.json)
+  with the new version number.
+* Edit the draft release on the (Github Releases Page)[https://github.com/dermotduffy/hass-motioneye/releases]
+
 ## Credits
 
 Thanks to [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom
