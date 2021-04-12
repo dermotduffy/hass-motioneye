@@ -231,7 +231,9 @@ Parameters:
 | `custom_left_text` `custom_right_text`| Custom text to show on the left or right, if the `custom-text` value is selected.|
 
 Note:
-   * Calling this service triggers a reset of the motionEye cameras which will pause the stream / recordings / motion detection (etc).
+   * Calling this service triggers a reset of the motionEye cameras which will pause the
+     stream / recordings / motion detection (etc).
+   * Ensure the `Text Overlay` switch is turned on to actually display the configured text overlays.
 
 Example:
 
