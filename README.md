@@ -295,7 +295,7 @@ hass-motioneye](https://github.com/dermotduffy/hass-motioneye/projects/3).
 * Update
   [custom_components/motioneye/manifest.json](https://github.com/dermotduffy/hass-motioneye/blob/main/custom_components/motioneye/manifest.json)
   with the new version number.
-* Edit the draft release on the (Github Releases Page)[https://github.com/dermotduffy/hass-motioneye/releases]
+* Edit the draft release on the [Github Releases Page](https://github.com/dermotduffy/hass-motioneye/releases)
 
 ## Credits
 
