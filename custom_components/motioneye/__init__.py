@@ -63,6 +63,7 @@ from homeassistant.const import (
     CONF_DEVICE_ID,
     CONF_NAME,
     CONF_SOURCE,
+    CONF_URL,
     HTTP_NOT_FOUND,
 )
 from homeassistant.core import HomeAssistant, ServiceCall, callback
@@ -86,7 +87,6 @@ from .const import (
     CONF_ACTION,
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
-    CONF_BASE_URL,
     CONF_CLIENT,
     CONF_CONFIG_ENTRY,
     CONF_COORDINATOR,
@@ -305,15 +305,15 @@ async def _add_camera(
         name=camera[KEY_NAME],
     )
     if entry.options.get(CONF_WEBHOOK_SET, DEFAULT_WEBHOOK_SET):
-        base_url = None
+        url = None
         try:
-            base_url = get_url(hass)
+            url = get_url(hass)
         except NoURLAvailableError:
             pass
-        if base_url:
+        if url:
             if _set_webhook(
                 _build_url(
-                    f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}",
+                    f"{url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_MOTION_DETECTED}",
                     EVENT_MOTION_DETECTED_KEYS,
                 ),
                 KEY_WEB_HOOK_NOTIFICATIONS_URL,
@@ -322,7 +322,7 @@ async def _add_camera(
                 camera,
             ) | _set_webhook(
                 _build_url(
-                    f"{base_url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_FILE_STORED}",
+                    f"{url}{API_PATH_DEVICE_ROOT}{device.id}/{EVENT_FILE_STORED}",
                     EVENT_FILE_STORED_KEYS,
                 ),
                 KEY_WEB_HOOK_STORAGE_URL,
@@ -347,7 +347,7 @@ async def _async_entry_updated(hass: HomeAssistant, config_entry: ConfigEntry) -
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up motionEye from a config entry."""
     client = create_motioneye_client(
-        entry.data[CONF_BASE_URL],
+        entry.data[CONF_URL],
         admin_username=entry.data.get(CONF_ADMIN_USERNAME),
         admin_password=entry.data.get(CONF_ADMIN_PASSWORD),
         surveillance_username=entry.data.get(CONF_SURVEILLANCE_USERNAME),

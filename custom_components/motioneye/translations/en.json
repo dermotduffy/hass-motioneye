@@ -14,7 +14,7 @@
                 "data": {
                     "admin_password": "Admin Password",
                     "admin_username": "Admin Username",
-                    "base_url": "URL",
+                    "url": "URL",
                     "surveillance_password": "Surveillance Password",
                     "surveillance_username": "Surveillance Username"
                 }

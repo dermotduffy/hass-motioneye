@@ -19,7 +19,7 @@ from homeassistant.config_entries import (
     ConfigFlow,
     OptionsFlow,
 )
-from homeassistant.const import CONF_SOURCE
+from homeassistant.const import CONF_SOURCE, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers.typing import ConfigType
 
@@ -27,7 +27,6 @@ from .const import (  # pylint:disable=unused-import
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
     CONF_WEBHOOK_SET,
-    CONF_BASE_URL,
     CONF_CONFIG_ENTRY,
     CONF_WEBHOOK_SET_OVERWRITE,
     CONF_SURVEILLANCE_PASSWORD,
@@ -41,7 +40,7 @@ _LOGGER = logging.getLogger(__name__)
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_BASE_URL): str,
+        vol.Required(CONF_URL): str,
         vol.Optional(CONF_ADMIN_USERNAME): str,
         vol.Optional(CONF_ADMIN_PASSWORD): str,
         vol.Optional(CONF_SURVEILLANCE_USERNAME): str,
@@ -70,7 +69,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
 
         errors = {}
         client = MotionEyeClient(
-            user_input[CONF_BASE_URL],
+            user_input[CONF_URL],
             admin_username=user_input.get(CONF_ADMIN_USERNAME),
             admin_password=user_input.get(CONF_ADMIN_PASSWORD),
             surveillance_username=user_input.get(CONF_SURVEILLANCE_USERNAME),
@@ -97,7 +96,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
                 return out
 
             out = self.async_create_entry(
-                title=f"{user_input[CONF_BASE_URL]}",
+                title=f"{user_input[CONF_URL]}",
                 data=user_input,
             )
             return out

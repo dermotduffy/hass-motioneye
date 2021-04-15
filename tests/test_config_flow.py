@@ -9,10 +9,10 @@ from motioneye_client.client import (
 )
 
 from homeassistant import config_entries, data_entry_flow, setup
+from homeassistant.const import CONF_URL
 from custom_components.motioneye.const import (
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
-    CONF_BASE_URL,
     CONF_CONFIG_ENTRY,
     CONF_WEBHOOK_SET,
     CONF_WEBHOOK_SET_OVERWRITE,
@@ -23,7 +23,7 @@ from custom_components.motioneye.const import (
 from homeassistant.helpers.typing import HomeAssistantType
 
 from . import (
-    TEST_BASE_URL,
+    TEST_URL,
     create_mock_motioneye_client,
     create_mock_motioneye_config_entry,
 )
@@ -54,7 +54,7 @@ async def test_user_success(hass: HomeAssistantType) -> None:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                CONF_BASE_URL: TEST_BASE_URL,
+                CONF_URL: TEST_URL,
                 CONF_ADMIN_USERNAME: "admin-username",
                 CONF_ADMIN_PASSWORD: "admin-password",
                 CONF_SURVEILLANCE_USERNAME: "surveillance-username",
@@ -64,9 +64,9 @@ async def test_user_success(hass: HomeAssistantType) -> None:
         await hass.async_block_till_done()
 
     assert result["type"] == "create_entry"
-    assert result["title"] == f"{TEST_BASE_URL}"
+    assert result["title"] == f"{TEST_URL}"
     assert result["data"] == {
-        CONF_BASE_URL: TEST_BASE_URL,
+        CONF_URL: TEST_URL,
         CONF_ADMIN_USERNAME: "admin-username",
         CONF_ADMIN_PASSWORD: "admin-password",
         CONF_SURVEILLANCE_USERNAME: "surveillance-username",
@@ -94,7 +94,7 @@ async def test_user_invalid_auth(hass: HomeAssistantType) -> None:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                CONF_BASE_URL: TEST_BASE_URL,
+                CONF_URL: TEST_URL,
                 CONF_ADMIN_USERNAME: "admin-username",
                 CONF_ADMIN_PASSWORD: "admin-password",
                 CONF_SURVEILLANCE_USERNAME: "surveillance-username",
@@ -125,7 +125,7 @@ async def test_user_cannot_connect(hass: HomeAssistantType) -> None:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                CONF_BASE_URL: TEST_BASE_URL,
+                CONF_URL: TEST_URL,
                 CONF_ADMIN_USERNAME: "admin-username",
                 CONF_ADMIN_PASSWORD: "admin-password",
                 CONF_SURVEILLANCE_USERNAME: "surveillance-username",
@@ -154,7 +154,7 @@ async def test_user_request_error(hass: HomeAssistantType) -> None:
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {
-                CONF_BASE_URL: TEST_BASE_URL,
+                CONF_URL: TEST_URL,
                 CONF_ADMIN_USERNAME: "admin-username",
                 CONF_ADMIN_PASSWORD: "admin-password",
                 CONF_SURVEILLANCE_USERNAME: "surveillance-username",
@@ -170,7 +170,7 @@ async def test_user_request_error(hass: HomeAssistantType) -> None:
 async def test_reauth(hass: HomeAssistantType) -> None:
     """Test a reauth."""
     config_data = {
-        CONF_BASE_URL: TEST_BASE_URL,
+        CONF_URL: TEST_URL,
     }
 
     config_entry = create_mock_motioneye_config_entry(hass, data=config_data)
@@ -189,7 +189,7 @@ async def test_reauth(hass: HomeAssistantType) -> None:
     mock_client = create_mock_motioneye_client()
 
     new_data = {
-        CONF_BASE_URL: TEST_BASE_URL,
+        CONF_URL: TEST_URL,
         CONF_ADMIN_USERNAME: "admin-username",
         CONF_ADMIN_PASSWORD: "admin-password",
         CONF_SURVEILLANCE_USERNAME: "surveillance-username",

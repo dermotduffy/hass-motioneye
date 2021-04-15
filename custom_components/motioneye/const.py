@@ -18,7 +18,6 @@ API_PATH_EVENT_REGEXP = (
 )
 
 CONF_CONFIG_ENTRY = "config_entry"
-CONF_BASE_URL = "base_url"
 CONF_ACTION = "action"
 CONF_CLIENT = "client"
 CONF_COORDINATOR = "coordinator"

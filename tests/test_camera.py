@@ -19,9 +19,9 @@ from motioneye_client.const import (
 import pytest
 
 from homeassistant.components.camera import async_get_image, async_get_mjpeg_stream
+from homeassistant.const import CONF_URL
 from custom_components.motioneye import get_motioneye_device_unique_id
 from custom_components.motioneye.const import (
-    CONF_BASE_URL,
     CONF_SURVEILLANCE_USERNAME,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
@@ -219,7 +219,7 @@ async def test_get_still_image_from_camera(
     config_entry = create_mock_motioneye_config_entry(
         hass,
         data={
-            CONF_BASE_URL: f"http://localhost:{server.port}",
+            CONF_URL: f"http://localhost:{server.port}",
             CONF_SURVEILLANCE_USERNAME: TEST_SURVEILLANCE_USERNAME,
         },
     )
@@ -253,7 +253,7 @@ async def test_get_stream_from_camera(
     config_entry = create_mock_motioneye_config_entry(
         hass,
         data={
-            CONF_BASE_URL: f"http://localhost:{stream_server.port}",
+            CONF_URL: f"http://localhost:{stream_server.port}",
             # The port won't be used as the client is a mock.
             CONF_SURVEILLANCE_USERNAME: TEST_SURVEILLANCE_USERNAME,
         },

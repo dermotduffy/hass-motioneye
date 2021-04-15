@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "data": {
-          "base_url": "[%key:common::config_flow::data::url%]",
+          "url": "[%key:common::config_flow::data::url%]",
           "admin_username": "Admin [%key:common::config_flow::data::username%]",
           "admin_password": "Admin [%key:common::config_flow::data::password%]",
           "surveillance_username": "Surveillance [%key:common::config_flow::data::username%]",
