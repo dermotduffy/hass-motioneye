@@ -6,20 +6,18 @@ from unittest.mock import AsyncMock, Mock, patch
 
 from motioneye_client.const import DEFAULT_PORT
 
-from custom_components.motioneye.const import DOMAIN
+from custom_components.motioneye.const import CONF_BASE_URL, DOMAIN
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.helpers.typing import HomeAssistantType
 
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 TEST_CONFIG_ENTRY_ID = "74565ad414754616000674c87bdc876c"
-TEST_HOST = "test"
-TEST_PORT = DEFAULT_PORT + 1
+TEST_BASE_URL = f"http://test:{DEFAULT_PORT+1}"
 TEST_CAMERA_ID = 100
 TEST_CAMERA_NAME = "Test Camera"
 TEST_CAMERA_ENTITY_ID = "camera.test_camera"
-TEST_CAMERA_DEVICE_ID = f"{TEST_HOST}:{TEST_PORT}_{TEST_CAMERA_ID}"
+TEST_CAMERA_DEVICE_ID = f"{TEST_CONFIG_ENTRY_ID}_{TEST_CAMERA_ID}"
 TEST_CAMERA = {
     "show_frame_changes": False,
     "framerate": 25,
@@ -138,8 +136,6 @@ TEST_SWITCH_MOTION_DETECTION_ENTITY_ID = (
     f"{TEST_SWITCH_ENTITY_ID_BASE}_motion_detection"
 )
 
-TEST_UNIQUE_ID = f"{TEST_HOST}:{TEST_PORT}"
-
 
 def create_mock_motioneye_client() -> AsyncMock:
     """Create mock motionEye client."""
@@ -161,9 +157,8 @@ def create_mock_motioneye_config_entry(
     config_entry: MockConfigEntry = MockConfigEntry(
         entry_id=TEST_CONFIG_ENTRY_ID,
         domain=DOMAIN,
-        data=data or {CONF_HOST: TEST_HOST, CONF_PORT: TEST_PORT},
-        title=f"{TEST_HOST}:{TEST_PORT}",
-        unique_id=TEST_UNIQUE_ID,
+        data=data or {CONF_BASE_URL: TEST_BASE_URL},
+        title=f"{TEST_BASE_URL}",
         options=options or {},
     )
     config_entry.add_to_hass(hass)

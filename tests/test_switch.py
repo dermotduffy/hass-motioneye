@@ -27,8 +27,6 @@ from . import (
     TEST_CAMERA_ID,
     TEST_CAMERA_NAME,
     TEST_CONFIG_ENTRY_ID,
-    TEST_HOST,
-    TEST_PORT,
     TEST_SWITCH_ENTITY_ID_BASE,
     TEST_SWITCH_MOTION_DETECTION_ENTITY_ID,
     create_mock_motioneye_client,
@@ -120,9 +118,9 @@ async def test_switch_has_correct_entities(hass: HomeAssistantType) -> None:
 async def test_switch_device_info(hass: HomeAssistantType) -> None:
     """Verify device information includes expected details."""
     client = create_mock_motioneye_client()
-    await setup_mock_motioneye_config_entry(hass, client=client)
+    config_entry = await setup_mock_motioneye_config_entry(hass, client=client)
 
-    device_id = get_motioneye_device_unique_id(TEST_HOST, TEST_PORT, TEST_CAMERA_ID)
+    device_id = get_motioneye_device_unique_id(config_entry.entry_id, TEST_CAMERA_ID)
     device_registry = dr.async_get(hass)
 
     device = device_registry.async_get_device({(DOMAIN, device_id)})

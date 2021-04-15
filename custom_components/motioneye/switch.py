@@ -16,7 +16,6 @@ from motioneye_client.const import (
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import callback
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.helpers.update_coordinator import (
@@ -59,8 +58,7 @@ async def async_setup_entry(
         async_add_entities(
             [
                 MotionEyeSwitch(
-                    entry.data[CONF_HOST],
-                    entry.data[CONF_PORT],
+                    entry.entry_id,
                     camera,
                     switch_key,
                     entry_data[CONF_CLIENT],
@@ -79,8 +77,7 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
 
     def __init__(
         self,
-        host: str,
-        port: int,
+        config_entry_id: str,
         camera: dict[str, Any],
         switch_key: str,
         client: MotionEyeClient,
@@ -93,10 +90,11 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
         )
         self._client = client
         self._camera_id = camera[KEY_ID]
-        self._device_id = get_motioneye_device_unique_id(host, port, self._camera_id)
+        self._device_id = get_motioneye_device_unique_id(
+            config_entry_id, self._camera_id
+        )
         self._unique_id = get_motioneye_entity_unique_id(
-            host,
-            port,
+            config_entry_id,
             self._camera_id,
             slugify(f"{TYPE_MOTIONEYE_SWITCH_BASE} {switch_key}"),
         )

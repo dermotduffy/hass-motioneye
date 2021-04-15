@@ -4,13 +4,12 @@ from __future__ import annotations
 import asyncio
 import logging
 from multidict import MultiDictProxy
-import re
 from typing import cast, Any, Callable
 from aiohttp import web
 from motioneye_client.client import (
     MotionEyeClient,
     MotionEyeClientError,
-    MotionEyeClientInvalidAuth,
+    MotionEyeClientInvalidAuthError,
 )
 import voluptuous as vol
 from motioneye_client.const import (
@@ -62,9 +61,7 @@ from homeassistant.const import (
     ATTR_DEVICE_ID,
     ATTR_ENTITY_ID,
     CONF_DEVICE_ID,
-    CONF_HOST,
     CONF_NAME,
-    CONF_PORT,
     CONF_SOURCE,
     HTTP_NOT_FOUND,
 )
@@ -89,7 +86,9 @@ from .const import (
     CONF_ACTION,
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
+    CONF_BASE_URL,
     CONF_CLIENT,
+    CONF_CONFIG_ENTRY,
     CONF_COORDINATOR,
     CONF_WEBHOOK_SET,
     CONF_WEBHOOK_SET_OVERWRITE,
@@ -110,8 +109,6 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
-REGEXP_DEVICE_UNIQUE_ID = re.compile(r"^(?P<host>[^:]+):(?P<port>\d+)_(?P<index>\d+)$")
 PLATFORMS = [CAMERA_DOMAIN, SWITCH_DOMAIN]
 
 EVENT_MOTION_DETECTED_KEYS = [
@@ -160,33 +157,28 @@ def create_motioneye_client(
     return MotionEyeClient(*args, **kwargs)
 
 
-def get_motioneye_config_unique_id(host: str, port: int) -> str:
-    """Get the unique_id for a motionEye config."""
-    return f"{host}:{port}"
-
-
-def get_motioneye_device_unique_id(host: str, port: int, camera_id: int) -> str:
+def get_motioneye_device_unique_id(config_entry_id: str, camera_id: int) -> str:
     """Get the unique_id for a motionEye device."""
-    return f"{get_motioneye_config_unique_id(host, port)}_{camera_id}"
+    return f"{config_entry_id}_{camera_id}"
 
 
 def _split_motioneye_device_unique_id(
     device_unique_id: str,
-) -> tuple[str, int, int] | None:
-    """Split a unique_id into a (host, port, camera index) tuple."""
-    data = REGEXP_DEVICE_UNIQUE_ID.search(device_unique_id)
-    return (
-        (data.group("host"), int(data.group("port")), int(data.group("index")))
-        if data
-        else None
-    )
+) -> tuple[str, int] | None:
+    """Split a unique_id into a (config_entry_id, camera index) tuple."""
+    data = device_unique_id.split("_", 1)
+    try:
+        return (data[0], int(data[1])) if data else None
+    except (ValueError, IndexError):
+        pass
+    return None
 
 
 def get_motioneye_entity_unique_id(
-    host: str, port: int, camera_id: int, entity_type: str
+    config_entry_id: str, camera_id: int, entity_type: str
 ) -> str:
     """Get the unique_id for a motionEye entity."""
-    return f"{get_motioneye_device_unique_id(host, port, camera_id)}_{entity_type}"
+    return f"{config_entry_id}_{camera_id}_{entity_type}"
 
 
 def get_camera_from_cameras(
@@ -238,7 +230,12 @@ async def _create_reauth_flow(
 ) -> None:
     hass.async_create_task(
         hass.config_entries.flow.async_init(
-            DOMAIN, context={CONF_SOURCE: SOURCE_REAUTH}, data=config_entry.data
+            DOMAIN,
+            context={
+                CONF_SOURCE: SOURCE_REAUTH,
+                CONF_CONFIG_ENTRY: config_entry,
+            },
+            data=config_entry.data,
         )
     )
 
@@ -350,8 +347,7 @@ async def _async_entry_updated(hass: HomeAssistant, config_entry: ConfigEntry) -
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up motionEye from a config entry."""
     client = create_motioneye_client(
-        entry.data[CONF_HOST],
-        entry.data[CONF_PORT],
+        entry.data[CONF_BASE_URL],
         admin_username=entry.data.get(CONF_ADMIN_USERNAME),
         admin_password=entry.data.get(CONF_ADMIN_PASSWORD),
         surveillance_username=entry.data.get(CONF_SURVEILLANCE_USERNAME),
@@ -360,7 +356,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         await client.async_client_login()
-    except MotionEyeClientInvalidAuth:
+    except MotionEyeClientInvalidAuthError:
         await client.async_client_close()
         await _create_reauth_flow(hass, entry)
         return False
@@ -400,9 +396,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             if not is_acceptable_camera(camera):
                 return
             camera_id = camera[KEY_ID]
-            device_unique_id = get_motioneye_device_unique_id(
-                entry.data[CONF_HOST], entry.data[CONF_PORT], camera_id
-            )
+            device_unique_id = get_motioneye_device_unique_id(entry.entry_id, camera_id)
             inbound_camera.add(device_unique_id)
 
             if device_unique_id in current_cameras:
@@ -573,7 +567,7 @@ class MotionEyeServices:
                 if key == DOMAIN:
                     components = _split_motioneye_device_unique_id(value)
                     if components:
-                        output.add((client, components[2]))
+                        output.add((client, components[1]))
                         break
         return output
 
