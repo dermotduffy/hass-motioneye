@@ -48,7 +48,7 @@ repos:
         additional_dependencies:
           - pytest-homeassistant-custom-component==0.2.1
           - homeassistant
-          - motioneye-client==0.3.0
+          - motioneye-client==0.3.1
         verbose: true
         args:
           - --strict

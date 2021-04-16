@@ -1,3 +1,3 @@
 homeassistant
 aiohttp_cors
-motioneye-client==0.3.0
+motioneye-client==0.3.1

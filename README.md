@@ -50,8 +50,7 @@ Home Assistant > Configuration > Integrations > Add Integration -> motionEye
 
 |Variable|Description|
 | --------------- | ------------------------------------------------------------------------- |
-|host|The hostname of the motionEye server|
-|port|The port of the motionEye server|
+|url|The URL of the motionEye server|
 |admin_username|The username of the motionEye administrative account, used for changing camera settings.|
 |admin_password|The password of the motionEye administrative account.|
 |surveillance_username|The username of the motionEye surveillance user, used to authenticate video streams.|

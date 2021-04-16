@@ -6,10 +6,10 @@
   "config_flow": true,
   "dependencies": ["http"],
   "requirements": [
-    "motioneye-client==0.3.0"
+    "motioneye-client==0.3.1"
   ],
   "codeowners": [
     "@dermotduffy"
   ],
-  "version": "0.0.6"
+  "version": "0.0.8"
 }
