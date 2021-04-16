@@ -51,9 +51,9 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
         """Handle the initial step."""
         out: dict[str, Any] = {}
         errors = {}
-
         if user_input is None:
-            user_input = {}
+            entry = self.context.get(CONF_CONFIG_ENTRY)
+            user_input = entry.data if entry else {}
         else:
             client = MotionEyeClient(
                 user_input[CONF_URL],
