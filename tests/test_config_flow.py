@@ -38,7 +38,7 @@ async def test_user_success(hass: HomeAssistantType) -> None:
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result["type"] == "form"
-    assert result["errors"] is None
+    assert result["errors"] == {}
 
     mock_client = create_mock_motioneye_client()
 
@@ -184,7 +184,7 @@ async def test_reauth(hass: HomeAssistantType) -> None:
         },
     )
     assert result["type"] == "form"
-    assert result["errors"] is None
+    assert result["errors"] == {}
 
     mock_client = create_mock_motioneye_client()
 
