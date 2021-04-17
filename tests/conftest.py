@@ -1,6 +1,7 @@
 """Global fixtures for motionEye component integration."""
-from unittest.mock import patch
 from typing import Any, Generator
+from unittest.mock import patch
+
 import pytest
 from pytest_homeassistant_custom_component.plugins import (  # noqa: F401
     enable_custom_integrations,

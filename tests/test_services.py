@@ -3,6 +3,9 @@ import copy
 import logging
 from unittest.mock import AsyncMock, call
 
+from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.typing import HomeAssistantType
 from motioneye_client.const import (
     KEY_TEXT_OVERLAY_CUSTOM_TEXT,
     KEY_TEXT_OVERLAY_CUSTOM_TEXT_RIGHT,
@@ -17,12 +20,9 @@ from custom_components.motioneye.const import (
     CONF_ACTION,
     DOMAIN,
     SERVICE_ACTION,
-    SERVICE_SNAPSHOT,
     SERVICE_SET_TEXT_OVERLAY,
+    SERVICE_SNAPSHOT,
 )
-from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.typing import HomeAssistantType
 
 from . import (
     TEST_CAMERA,

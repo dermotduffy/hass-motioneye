@@ -2,6 +2,11 @@
 import copy
 from unittest.mock import AsyncMock, call
 
+from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
+from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_OFF, SERVICE_TURN_ON
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.typing import HomeAssistantType
+import homeassistant.util.dt as dt_util
 from motioneye_client.const import (
     KEY_MOTION_DETECTION,
     KEY_MOVIES,
@@ -9,6 +14,7 @@ from motioneye_client.const import (
     KEY_TEXT_OVERLAY,
     KEY_VIDEO_STREAMING,
 )
+from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.motioneye import get_motioneye_device_unique_id
 from custom_components.motioneye.const import (
@@ -16,11 +22,6 @@ from custom_components.motioneye.const import (
     DOMAIN,
     MOTIONEYE_MANUFACTURER,
 )
-from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
-from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_OFF, SERVICE_TURN_ON
-from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.typing import HomeAssistantType
-import homeassistant.util.dt as dt_util
 
 from . import (
     TEST_CAMERA,
@@ -32,8 +33,6 @@ from . import (
     create_mock_motioneye_client,
     setup_mock_motioneye_config_entry,
 )
-
-from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 
 async def test_switch_turn_on_off(hass: HomeAssistantType) -> None:

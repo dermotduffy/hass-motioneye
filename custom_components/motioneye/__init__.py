@@ -3,56 +3,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from multidict import MultiDictProxy
-from typing import cast, Any, Callable
-from aiohttp import web
-from motioneye_client.client import (
-    MotionEyeClient,
-    MotionEyeClientError,
-    MotionEyeClientInvalidAuthError,
-)
-import voluptuous as vol
-from motioneye_client.const import (
-    KEY_CAMERAS,
-    KEY_ID,
-    KEY_ACTION_SNAPSHOT,
-    KEY_NAME,
-    KEY_TEXT_OVERLAY_CAMERA_NAME,
-    KEY_TEXT_OVERLAY_CUSTOM_TEXT,
-    KEY_TEXT_OVERLAY_CUSTOM_TEXT_LEFT,
-    KEY_TEXT_OVERLAY_CUSTOM_TEXT_RIGHT,
-    KEY_TEXT_OVERLAY_DISABLED,
-    KEY_TEXT_OVERLAY_LEFT,
-    KEY_TEXT_OVERLAY_RIGHT,
-    KEY_TEXT_OVERLAY_TIMESTAMP,
-    KEY_HTTP_METHOD_GET,
-    KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
-    KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
-    KEY_WEB_HOOK_NOTIFICATIONS_URL,
-    KEY_WEB_HOOK_STORAGE_ENABLED,
-    KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
-    KEY_WEB_HOOK_STORAGE_URL,
-    KEY_WEB_HOOK_CONVERSION_SPECIFIERS,
-    KEY_WEB_HOOK_CS_EVENT,
-    KEY_WEB_HOOK_CS_FRAME_NUMBER,
-    KEY_WEB_HOOK_CS_CAMERA_ID,
-    KEY_WEB_HOOK_CS_CHANGED_PIXELS,
-    KEY_WEB_HOOK_CS_NOISE_LEVEL,
-    KEY_WEB_HOOK_CS_WIDTH,
-    KEY_WEB_HOOK_CS_HEIGHT,
-    KEY_WEB_HOOK_CS_MOTION_WIDTH,
-    KEY_WEB_HOOK_CS_MOTION_HEIGHT,
-    KEY_WEB_HOOK_CS_MOTION_CENTER_X,
-    KEY_WEB_HOOK_CS_MOTION_CENTER_Y,
-    KEY_WEB_HOOK_CS_FILE_PATH,
-    KEY_WEB_HOOK_CS_FILE_TYPE,
-    KEY_WEB_HOOK_CS_THRESHOLD,
-    KEY_WEB_HOOK_CS_DESPECKLE_LABELS,
-    KEY_WEB_HOOK_CS_FPS,
-    KEY_WEB_HOOK_CS_HOST,
-    KEY_WEB_HOOK_CS_MOTION_VERSION,
-)
+from typing import Any, Callable, cast
 
+from aiohttp import web
 from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
@@ -67,7 +20,6 @@ from homeassistant.const import (
     HTTP_NOT_FOUND,
 )
 from homeassistant.core import HomeAssistant, ServiceCall, callback
-
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import (
     config_validation as cv,
@@ -80,6 +32,53 @@ from homeassistant.helpers.dispatcher import (
 )
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from motioneye_client.client import (
+    MotionEyeClient,
+    MotionEyeClientError,
+    MotionEyeClientInvalidAuthError,
+)
+from motioneye_client.const import (
+    KEY_ACTION_SNAPSHOT,
+    KEY_CAMERAS,
+    KEY_HTTP_METHOD_GET,
+    KEY_ID,
+    KEY_NAME,
+    KEY_TEXT_OVERLAY_CAMERA_NAME,
+    KEY_TEXT_OVERLAY_CUSTOM_TEXT,
+    KEY_TEXT_OVERLAY_CUSTOM_TEXT_LEFT,
+    KEY_TEXT_OVERLAY_CUSTOM_TEXT_RIGHT,
+    KEY_TEXT_OVERLAY_DISABLED,
+    KEY_TEXT_OVERLAY_LEFT,
+    KEY_TEXT_OVERLAY_RIGHT,
+    KEY_TEXT_OVERLAY_TIMESTAMP,
+    KEY_WEB_HOOK_CONVERSION_SPECIFIERS,
+    KEY_WEB_HOOK_CS_CAMERA_ID,
+    KEY_WEB_HOOK_CS_CHANGED_PIXELS,
+    KEY_WEB_HOOK_CS_DESPECKLE_LABELS,
+    KEY_WEB_HOOK_CS_EVENT,
+    KEY_WEB_HOOK_CS_FILE_PATH,
+    KEY_WEB_HOOK_CS_FILE_TYPE,
+    KEY_WEB_HOOK_CS_FPS,
+    KEY_WEB_HOOK_CS_FRAME_NUMBER,
+    KEY_WEB_HOOK_CS_HEIGHT,
+    KEY_WEB_HOOK_CS_HOST,
+    KEY_WEB_HOOK_CS_MOTION_CENTER_X,
+    KEY_WEB_HOOK_CS_MOTION_CENTER_Y,
+    KEY_WEB_HOOK_CS_MOTION_HEIGHT,
+    KEY_WEB_HOOK_CS_MOTION_VERSION,
+    KEY_WEB_HOOK_CS_MOTION_WIDTH,
+    KEY_WEB_HOOK_CS_NOISE_LEVEL,
+    KEY_WEB_HOOK_CS_THRESHOLD,
+    KEY_WEB_HOOK_CS_WIDTH,
+    KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
+    KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
+    KEY_WEB_HOOK_NOTIFICATIONS_URL,
+    KEY_WEB_HOOK_STORAGE_ENABLED,
+    KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
+    KEY_WEB_HOOK_STORAGE_URL,
+)
+from multidict import MultiDictProxy
+import voluptuous as vol
 
 from .const import (
     API_PATH_DEVICE_ROOT,
@@ -90,21 +89,21 @@ from .const import (
     CONF_CLIENT,
     CONF_CONFIG_ENTRY,
     CONF_COORDINATOR,
-    CONF_WEBHOOK_SET,
-    CONF_WEBHOOK_SET_OVERWRITE,
     CONF_ON_UNLOAD,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
+    CONF_WEBHOOK_SET,
+    CONF_WEBHOOK_SET_OVERWRITE,
+    DEFAULT_SCAN_INTERVAL,
     DEFAULT_WEBHOOK_SET,
     DEFAULT_WEBHOOK_SET_OVERWRITE,
-    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
     MOTIONEYE_MANUFACTURER,
     SERVICE_ACTION,
-    SERVICE_SNAPSHOT,
     SERVICE_SET_TEXT_OVERLAY,
+    SERVICE_SNAPSHOT,
     SIGNAL_CAMERA_ADD,
 )
 

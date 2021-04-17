@@ -5,15 +5,6 @@ import logging
 from typing import Any, Callable
 
 import aiohttp
-from motioneye_client.client import MotionEyeClient, MotionEyeClientURLParseError
-from motioneye_client.const import (
-    DEFAULT_SURVEILLANCE_USERNAME,
-    KEY_ID,
-    KEY_MOTION_DETECTION,
-    KEY_NAME,
-    KEY_STREAMING_AUTH_MODE,
-)
-
 from homeassistant.components.mjpeg.camera import (
     CONF_MJPEG_URL,
     CONF_STILL_IMAGE_URL,
@@ -34,6 +25,15 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
 )
+from jinja2 import Template
+from motioneye_client.client import MotionEyeClient, MotionEyeClientURLParseError
+from motioneye_client.const import (
+    DEFAULT_SURVEILLANCE_USERNAME,
+    KEY_ID,
+    KEY_MOTION_DETECTION,
+    KEY_NAME,
+    KEY_STREAMING_AUTH_MODE,
+)
 
 from . import (
     get_camera_from_cameras,
@@ -45,14 +45,13 @@ from . import (
 from .const import (
     CONF_CLIENT,
     CONF_COORDINATOR,
+    CONF_STREAM_URL_TEMPLATE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
-    CONF_STREAM_URL_TEMPLATE,
     DOMAIN,
     MOTIONEYE_MANUFACTURER,
     TYPE_MOTIONEYE_MJPEG_CAMERA,
 )
-from jinja2 import Template
 
 _LOGGER = logging.getLogger(__name__)
 
