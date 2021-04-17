@@ -6,12 +6,12 @@
      align="right"
      style="float: right; margin: 10px 0px 20px 20px;" />
 
-[![GitHub Release][releases_badge]][releases]
-[![Build Status][build_badge]][build]
-[![Test Coverage][coverage_badge]][coverage]
-[![License][license_badge]](LICENSE)
-[![hacs][hacs_badge]][hacs]
-[![BuyMeCoffee][buymecoffee_badge]][buymecoffee]
+[![GitHub Release](https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=flat-square)](https://github.com/dermotduffy/hass-motioneye/releases)
+[![Build Status](https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Build?style=flat-square)](https://github.com/dermotduffy/hass-motioneye/actions/workflows/tests.yaml)
+[![Test Coverage](https://img.shields.io/codecov/c/gh/dermotduffy/hass-motioneye?style=flat-square)](https://app.codecov.io/gh/dermotduffy/hass-motioneye/)
+[![License](https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat-square)](LICENSE)
+[![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://hacs.xyz)
+[![BuyMeCoffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat-square)](https://www.buymeacoffee.com/dermotdu)
 
 The motionEye integration allows you to integrate your
 [motionEye](https://github.com/ccrisan/motioneye) server into Home Assistant. motionEye
@@ -346,20 +346,3 @@ Thanks to [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom
 Component
 Cookiecutter](https://github.com/oncleben31/cookiecutter-homeassistant-custom-component)
 template which was used for the initial skeleton of this component.
-
----
-
-[build_badge]: https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Build?style=flat-square
-[build]: https://github.com/dermotduffy/hass-motioneye/actions/workflows/tests.yaml
-[coverage_badge]: https://img.shields.io/codecov/c/gh/dermotduffy/hass-motioneye?style=flat-square
-[coverage]: https://app.codecov.io/gh/dermotduffy/hass-motioneye/
-[integration_blueprint]: https://github.com/custom-components/integration_blueprint
-[black]: https://github.com/psf/black
-[buymecoffee]: https://www.buymeacoffee.com/dermotdu
-[buymecoffee_badge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat-square
-[hacs]: https://hacs.xyz
-[hacs_badge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square
-[motioneyelogo]: images/motioneye.png
-[license_badge]: https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat-square
-[releases_badge]: https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=flat-square
-[releases]: https://github.com/dermotduffy/hass-motioneye/releases
