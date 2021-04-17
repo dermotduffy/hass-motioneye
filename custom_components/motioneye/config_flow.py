@@ -21,6 +21,7 @@ from homeassistant.config_entries import (
 )
 from homeassistant.const import CONF_SOURCE, CONF_URL
 from homeassistant.core import callback
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -93,7 +94,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_URL, default=user_input.get(CONF_URL)): str,
+                    vol.Required(CONF_URL, default=user_input.get(CONF_URL)): cv.url,
                     vol.Optional(
                         CONF_ADMIN_USERNAME, default=user_input.get(CONF_ADMIN_USERNAME)
                     ): str,
@@ -171,7 +172,7 @@ class MotionEyeOptionsFlow(OptionsFlow):  # type: ignore[misc]
                         "",
                     ),
                 )
-            ] = str
+            ] = vol.Any("", cv.url)
 
         out = self.async_show_form(step_id="init", data_schema=vol.Schema(schema))
         return out
