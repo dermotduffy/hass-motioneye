@@ -5,7 +5,7 @@ import logging
 from typing import Any, Callable
 
 import aiohttp
-from motioneye_client.client import MotionEyeClient
+from motioneye_client.client import MotionEyeClient, MotionEyeClientURLParseError
 from motioneye_client.const import (
     DEFAULT_SURVEILLANCE_USERNAME,
     KEY_ID,
@@ -47,10 +47,12 @@ from .const import (
     CONF_COORDINATOR,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
+    CONF_STREAM_URL_TEMPLATE,
     DOMAIN,
     MOTIONEYE_MANUFACTURER,
     TYPE_MOTIONEYE_MJPEG_CAMERA,
 )
+from jinja2 import Template
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +79,7 @@ async def async_setup_entry(
                     camera,
                     entry_data[CONF_CLIENT],
                     entry_data[CONF_COORDINATOR],
+                    entry.options,
                 )
             ]
         )
@@ -96,6 +99,7 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
+        options: dict[str, Any],
     ):
         """Initialize a MJPEG camera."""
         self._surveillance_username = username
@@ -113,6 +117,7 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
 
         # motionEye cameras are always streaming or unavailable.
         self.is_streaming = True
+        self._options = options
 
         MjpegCamera.__init__(
             self,
@@ -134,11 +139,21 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
         ]:
             auth = camera[KEY_STREAMING_AUTH_MODE]
 
+        streaming_template = self._options.get(CONF_STREAM_URL_TEMPLATE, "").strip()
+        streaming_url = None
+
+        if streaming_template:
+            streaming_url = Template(streaming_template).render(**camera)
+        else:
+            try:
+                streaming_url = self._client.get_camera_steam_url(camera)
+            except MotionEyeClientURLParseError:
+                pass
         return {
             CONF_NAME: camera[KEY_NAME],
             CONF_USERNAME: self._surveillance_username if auth is not None else None,
             CONF_PASSWORD: self._surveillance_password if auth is not None else None,
-            CONF_MJPEG_URL: self._client.get_camera_steam_url(camera),
+            CONF_MJPEG_URL: streaming_url,
             CONF_STILL_IMAGE_URL: self._client.get_camera_snapshot_url(camera),
             CONF_AUTHENTICATION: auth,
         }

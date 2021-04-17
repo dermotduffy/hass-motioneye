@@ -18,6 +18,7 @@ from custom_components.motioneye.const import (
     CONF_WEBHOOK_SET_OVERWRITE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
+    CONF_STREAM_URL_TEMPLATE,
     DOMAIN,
 )
 from homeassistant.helpers.typing import HomeAssistantType
@@ -220,7 +221,7 @@ async def test_reauth(hass: HomeAssistantType) -> None:
 
 
 async def test_options(hass: HomeAssistantType) -> None:
-    """Check an options flow priority option."""
+    """Check an options flow."""
 
     config_entry = create_mock_motioneye_config_entry(hass)
 
@@ -248,3 +249,36 @@ async def test_options(hass: HomeAssistantType) -> None:
         assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
         assert result["data"][CONF_WEBHOOK_SET]
         assert result["data"][CONF_WEBHOOK_SET_OVERWRITE]
+        assert CONF_STREAM_URL_TEMPLATE not in result["data"]
+
+
+async def test_advanced_options(hass: HomeAssistantType) -> None:
+    """Check an options flow with advanced options."""
+
+    config_entry = create_mock_motioneye_config_entry(hass)
+
+    client = create_mock_motioneye_client()
+    with patch(
+        "custom_components.motioneye.config_flow.MotionEyeClient",
+        return_value=client,
+    ), patch("custom_components.motioneye.async_setup", return_value=True), patch(
+        "custom_components.motioneye.async_setup_entry", return_value=True
+    ):
+        await hass.async_block_till_done()
+
+        result = await hass.config_entries.options.async_init(
+            config_entry.entry_id, context={"show_advanced_options": True}
+        )
+        result = await hass.config_entries.options.async_configure(
+            result["flow_id"],
+            user_input={
+                CONF_WEBHOOK_SET: True,
+                CONF_WEBHOOK_SET_OVERWRITE: True,
+                CONF_STREAM_URL_TEMPLATE: "moo",
+            },
+        )
+        await hass.async_block_till_done()
+        assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
+        assert result["data"][CONF_WEBHOOK_SET]
+        assert result["data"][CONF_WEBHOOK_SET_OVERWRITE]
+        assert result["data"][CONF_STREAM_URL_TEMPLATE] == "moo"

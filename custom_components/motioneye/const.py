@@ -28,6 +28,7 @@ CONF_SURVEILLANCE_USERNAME = "surveillance_username"
 CONF_SURVEILLANCE_PASSWORD = "surveillance_password"
 CONF_WEBHOOK_SET = "webhook_set"
 CONF_WEBHOOK_SET_OVERWRITE = "webhook_set_overwrite"
+CONF_STREAM_URL_TEMPLATE = "stream_url_template"
 
 DEFAULT_WEBHOOK_SET = True
 DEFAULT_WEBHOOK_SET_OVERWRITE = False

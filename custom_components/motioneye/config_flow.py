@@ -28,6 +28,7 @@ from .const import (  # pylint:disable=unused-import
     CONF_ADMIN_USERNAME,
     CONF_WEBHOOK_SET,
     CONF_CONFIG_ENTRY,
+    CONF_STREAM_URL_TEMPLATE,
     CONF_WEBHOOK_SET_OVERWRITE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
@@ -144,25 +145,33 @@ class MotionEyeOptionsFlow(OptionsFlow):  # type: ignore[misc]
             out = self.async_create_entry(title="", data=user_input)
             return out
 
-        out = self.async_show_form(
-            step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        CONF_WEBHOOK_SET,
-                        default=self._config_entry.options.get(
-                            CONF_WEBHOOK_SET,
-                            DEFAULT_WEBHOOK_SET,
-                        ),
-                    ): bool,
-                    vol.Required(
-                        CONF_WEBHOOK_SET_OVERWRITE,
-                        default=self._config_entry.options.get(
-                            CONF_WEBHOOK_SET_OVERWRITE,
-                            DEFAULT_WEBHOOK_SET_OVERWRITE,
-                        ),
-                    ): bool,
-                }
-            ),
-        )
+        schema: dict[Any, Any] = {
+            vol.Required(
+                CONF_WEBHOOK_SET,
+                default=self._config_entry.options.get(
+                    CONF_WEBHOOK_SET,
+                    DEFAULT_WEBHOOK_SET,
+                ),
+            ): bool,
+            vol.Required(
+                CONF_WEBHOOK_SET_OVERWRITE,
+                default=self._config_entry.options.get(
+                    CONF_WEBHOOK_SET_OVERWRITE,
+                    DEFAULT_WEBHOOK_SET_OVERWRITE,
+                ),
+            ): bool,
+        }
+
+        if self.show_advanced_options:
+            schema[
+                vol.Required(
+                    CONF_STREAM_URL_TEMPLATE,
+                    default=self._config_entry.options.get(
+                        CONF_STREAM_URL_TEMPLATE,
+                        "",
+                    ),
+                )
+            ] = str
+
+        out = self.async_show_form(step_id="init", data_schema=vol.Schema(schema))
         return out
