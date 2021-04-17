@@ -27,7 +27,7 @@
                 "data": {
                     "webhook_set": "Configure motionEye webhooks to report events to Home Assistant",
                     "webhook_set_overwrite": "Overwrite unrecognized webhooks",
-                    "stream_url_template": "Streaming URL template to use (see documentation)"
+                    "stream_url_template": "Stream URL template (see documentation)"
                 }
             }
         }

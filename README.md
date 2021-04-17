@@ -71,6 +71,11 @@ Home Assistant > Configuration > Integrations > motionEye > Options
   webhooks that are already configured and are not recognized as belonging to this
   integration (web hooks are deemed to belong to this integration if they contain
   `src=hass-motioneye` in the query string).
+* [**Advanced**]: **Steam URL template** [default=`None`]: A [jinja2](https://jinja.palletsprojects.com/)
+  template that is used to override the standard MJPEG stream URL (e.g. for use with reverse
+  proxies). See [Camera MJPEG Streams](#streams) below. This option is only shown to
+  users who have [advanced
+  mode](https://www.home-assistant.io/blog/2019/07/17/release-96/#advanced-mode) enabled.
 
 ## Usage
 
@@ -85,6 +90,7 @@ Notes:
    * If the video streaming switch is turned off, the camera entity will become unavailable (but the rest of the integration will continue to work).
    * As cameras are added or removed to motionEye, devices/entities are automatically added or removed from Home Assistant.
 
+<a name="streams"></a>
 #### Camera MJPEG Streams
 
 In order for the MJPEG streams to function they need to be accessible at
@@ -93,9 +99,46 @@ that is configured in the `motionEye` UI (under `Video Streaming`) on the host t
 motionEye integration is configured to use.
 
 Example:
-   * If this integration is configured to talk to motionEye on host `motioneye` port
-     `8765`, and a camera is configured to stream on port `8081` -- Home Assistant needs to
-     be able to communicate to `motioneye` port `8081`.
+* If this integration is configured to talk to motionEye at `http://motioneye:8765`, and
+  a camera is configured to stream on port `8081` -- Home Assistant needs to
+  be able to communicate to `motioneye` port `8081`.
+
+##### Stream URL Template
+
+For advanced usecases, this behavior can be changed with the [Steam URL
+template](#options) option. When set, this string will override the default stream
+address that is derived from  the behavior described above. This option supports [jinja2
+templates](https://jinja.palletsprojects.com/) and has the `camera` dict variables from
+motionEye
+([example](https://github.com/dermotduffy/hass-motioneye/blob/main/tests/__init__.py#L22))
+available for the template.
+
+This is very useful when motionEye is behind a custom configured reverse proxy, and/or
+when the stream ports are otherwise not accessible to Home Assistant (e.g. firewall
+rules).
+
+###### Stream URL Template Examples
+
+The below are useful examples of how this option may be set.
+
+Use the camera name in the stream URL:
+
+```
+http://motioneye/video/{{ name }}
+```
+
+Use the camera name in the stream URL, converting it to lowercase first:
+
+```
+http://motioneye/video/{{ name|lower }}
+```
+
+Use the camera id in the stream URL:
+
+```
+http://motioneye/video/{{ id }}
+```
+
 
 ### Events
 
