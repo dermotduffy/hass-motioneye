@@ -3,15 +3,6 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from homeassistant.components.switch import SwitchEntity
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import callback
-from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-)
-from homeassistant.util import slugify
 from motioneye_client.client import MotionEyeClient
 from motioneye_client.const import (
     KEY_ID,
@@ -22,6 +13,16 @@ from motioneye_client.const import (
     KEY_TEXT_OVERLAY,
     KEY_VIDEO_STREAMING,
 )
+
+from homeassistant.components.switch import SwitchEntity
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import callback
+from homeassistant.helpers.typing import HomeAssistantType
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+)
+from homeassistant.util import slugify
 
 from . import (
     get_camera_from_cameras,

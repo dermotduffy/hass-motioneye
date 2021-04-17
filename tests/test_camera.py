@@ -6,13 +6,6 @@ from unittest.mock import AsyncMock, Mock
 
 from aiohttp import web
 from aiohttp.web_exceptions import HTTPBadGateway
-from homeassistant.components.camera import async_get_image, async_get_mjpeg_stream
-from homeassistant.const import CONF_URL
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.device_registry import async_get_registry
-from homeassistant.helpers.typing import HomeAssistantType
-import homeassistant.util.dt as dt_util
 from motioneye_client.client import (
     MotionEyeClientError,
     MotionEyeClientInvalidAuthError,
@@ -35,6 +28,13 @@ from custom_components.motioneye.const import (
     DOMAIN,
     MOTIONEYE_MANUFACTURER,
 )
+from homeassistant.components.camera import async_get_image, async_get_mjpeg_stream
+from homeassistant.const import CONF_URL
+from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.device_registry import async_get_registry
+from homeassistant.helpers.typing import HomeAssistantType
+import homeassistant.util.dt as dt_util
 
 from . import (
     TEST_CAMERA_DEVICE_ID,

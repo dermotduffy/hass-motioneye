@@ -6,32 +6,6 @@ import logging
 from typing import Any, Callable, cast
 
 from aiohttp import web
-from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
-from homeassistant.components.http import HomeAssistantView
-from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
-from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntry
-from homeassistant.const import (
-    ATTR_DEVICE_ID,
-    ATTR_ENTITY_ID,
-    CONF_DEVICE_ID,
-    CONF_NAME,
-    CONF_SOURCE,
-    CONF_URL,
-    HTTP_NOT_FOUND,
-)
-from homeassistant.core import HomeAssistant, ServiceCall, callback
-from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers import (
-    config_validation as cv,
-    device_registry as dr,
-    entity_registry as er,
-)
-from homeassistant.helpers.dispatcher import (
-    async_dispatcher_connect,
-    async_dispatcher_send,
-)
-from homeassistant.helpers.network import NoURLAvailableError, get_url
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from motioneye_client.client import (
     MotionEyeClient,
     MotionEyeClientError,
@@ -79,6 +53,33 @@ from motioneye_client.const import (
 )
 from multidict import MultiDictProxy
 import voluptuous as vol
+
+from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
+from homeassistant.components.http import HomeAssistantView
+from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
+from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntry
+from homeassistant.const import (
+    ATTR_DEVICE_ID,
+    ATTR_ENTITY_ID,
+    CONF_DEVICE_ID,
+    CONF_NAME,
+    CONF_SOURCE,
+    CONF_URL,
+    HTTP_NOT_FOUND,
+)
+from homeassistant.core import HomeAssistant, ServiceCall, callback
+from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import (
+    config_validation as cv,
+    device_registry as dr,
+    entity_registry as er,
+)
+from homeassistant.helpers.dispatcher import (
+    async_dispatcher_connect,
+    async_dispatcher_send,
+)
+from homeassistant.helpers.network import NoURLAvailableError, get_url
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
     API_PATH_DEVICE_ROOT,

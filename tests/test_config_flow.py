@@ -2,9 +2,6 @@
 import logging
 from unittest.mock import AsyncMock, patch
 
-from homeassistant import config_entries, data_entry_flow, setup
-from homeassistant.const import CONF_URL
-from homeassistant.helpers.typing import HomeAssistantType
 from motioneye_client.client import (
     MotionEyeClientConnectionError,
     MotionEyeClientInvalidAuthError,
@@ -22,6 +19,9 @@ from custom_components.motioneye.const import (
     CONF_WEBHOOK_SET_OVERWRITE,
     DOMAIN,
 )
+from homeassistant import config_entries, data_entry_flow, setup
+from homeassistant.const import CONF_URL
+from homeassistant.helpers.typing import HomeAssistantType
 
 from . import TEST_URL, create_mock_motioneye_client, create_mock_motioneye_config_entry
 

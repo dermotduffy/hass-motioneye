@@ -2,11 +2,6 @@
 import copy
 from unittest.mock import AsyncMock, call
 
-from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
-from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_OFF, SERVICE_TURN_ON
-from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.typing import HomeAssistantType
-import homeassistant.util.dt as dt_util
 from motioneye_client.const import (
     KEY_MOTION_DETECTION,
     KEY_MOVIES,
@@ -22,6 +17,11 @@ from custom_components.motioneye.const import (
     DOMAIN,
     MOTIONEYE_MANUFACTURER,
 )
+from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
+from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_OFF, SERVICE_TURN_ON
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.typing import HomeAssistantType
+import homeassistant.util.dt as dt_util
 
 from . import (
     TEST_CAMERA,

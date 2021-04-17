@@ -4,13 +4,13 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import AsyncMock, Mock, patch
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_URL
-from homeassistant.helpers.typing import HomeAssistantType
 from motioneye_client.const import DEFAULT_PORT
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.motioneye.const import DOMAIN
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_URL
+from homeassistant.helpers.typing import HomeAssistantType
 
 TEST_CONFIG_ENTRY_ID = "74565ad414754616000674c87bdc876c"
 TEST_URL = f"http://test:{DEFAULT_PORT+1}"
