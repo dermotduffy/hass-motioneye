@@ -107,11 +107,12 @@ Example:
 
 For advanced usecases, this behavior can be changed with the [Steam URL
 template](#options) option. When set, this string will override the default stream
-address that is derived from  the behavior described above. This option supports [jinja2
-templates](https://jinja.palletsprojects.com/) and has the `camera` dict variables from
-motionEye
+address that is derived from the default behavior described above. This option supports
+[jinja2 templates](https://jinja.palletsprojects.com/) and has the `camera` dict
+variables from motionEye
 ([example](https://github.com/dermotduffy/hass-motioneye/blob/main/tests/__init__.py#L22))
-available for the template.
+available for the template. Note that no Home Assistant state is available to the
+template, only the camera dict from motionEye.
 
 This is very useful when motionEye is behind a custom configured reverse proxy, and/or
 when the stream ports are otherwise not accessible to Home Assistant (e.g. firewall
