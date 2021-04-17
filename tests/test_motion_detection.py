@@ -208,6 +208,52 @@ async def test_setup_camera_with_old_webhook(
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
 
+async def test_setup_camera_with_correct_webhook(
+    hass: HomeAssistantType,
+) -> None:
+    """Verify that webhooks are not overwritten if they are already correct."""
+
+    await async_process_ha_core_config(
+        hass,
+        {"internal_url": "http://example.local:8123"},
+    )
+
+    client = create_mock_motioneye_client()
+    config_entry = create_mock_motioneye_config_entry(hass)
+
+    device_registry = await dr.async_get_registry(hass)
+    device = device_registry.async_get_or_create(
+        config_entry_id=config_entry.entry_id,
+        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)},
+    )
+
+    cameras = copy.deepcopy(TEST_CAMERAS)
+    cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_NOTIFICATIONS_ENABLED] = True
+    cameras[KEY_CAMERAS][0][
+        KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD
+    ] = KEY_HTTP_METHOD_GET
+    cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_NOTIFICATIONS_URL] = (
+        f"http://example.local:8123/api/motioneye/device/{device.id}/motion_detected?"
+        f"{WEB_HOOK_MOTION_DETECTED_QUERY_STRING}"
+    )
+    cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_STORAGE_ENABLED] = True
+    cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_STORAGE_HTTP_METHOD] = KEY_HTTP_METHOD_GET
+    cameras[KEY_CAMERAS][0][KEY_WEB_HOOK_STORAGE_URL] = (
+        f"http://example.local:8123/api/motioneye/device/{device.id}/file_stored?"
+        f"{WEB_HOOK_FILE_STORED_QUERY_STRING}"
+    )
+    client.async_get_cameras = AsyncMock(return_value=cameras)
+
+    await setup_mock_motioneye_config_entry(
+        hass,
+        config_entry=config_entry,
+        client=client,
+    )
+
+    # Webhooks are correctly configured, so no set call should have been made.
+    assert not client.async_set_camera.called
+
+
 async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
     """Test good callbacks."""
     await async_setup_component(hass, "http", {"http": {}})

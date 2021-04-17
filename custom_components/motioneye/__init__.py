@@ -274,7 +274,7 @@ async def _add_camera(
             or not camera.get(key_url)
             or _is_recognized_web_hook(camera[key_url])
         ) and (
-            camera.get(key_enabled, False)
+            not camera.get(key_enabled, False)
             or camera.get(key_method) != KEY_HTTP_METHOD_GET
             or camera.get(key_url) != url
         ):
