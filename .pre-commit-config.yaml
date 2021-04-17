@@ -56,3 +56,7 @@ repos:
           - --allow-any-generics
           - --ignore-missing-imports
           - --show-error-codes
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.7.0
+    hooks:
+      - id: isort
