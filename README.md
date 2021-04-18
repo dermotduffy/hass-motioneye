@@ -7,7 +7,7 @@
      style="float: right; margin: 10px 0px 20px 20px;" />
 
 [![GitHub Release](https://img.shields.io/github/release/dermotduffy/hass-motioneye.svg?style=flat-square)](https://github.com/dermotduffy/hass-motioneye/releases)
-[![Build Status](https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Build?style=flat-square)](https://github.com/dermotduffy/hass-motioneye/actions/workflows/tests.yaml)
+[![Build Status](https://img.shields.io/github/workflow/status/dermotduffy/hass-motioneye/Build?style=flat-square)](https://github.com/dermotduffy/hass-motioneye/actions/workflows/build.yaml)
 [![Test Coverage](https://img.shields.io/codecov/c/gh/dermotduffy/hass-motioneye?style=flat-square)](https://app.codecov.io/gh/dermotduffy/hass-motioneye/)
 [![License](https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat-square)](LICENSE)
 [![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://hacs.xyz)
