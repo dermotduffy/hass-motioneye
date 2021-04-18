@@ -1,5 +1,3 @@
-# motionEye Home Assistant Integration
-
 <img src="https://github.com/dermotduffy/hass-motioneye/blob/main/images/motioneye.png?raw=true"
      alt="motionEye icon"
      width="15%"
@@ -12,6 +10,8 @@
 [![License](https://img.shields.io/github/license/dermotduffy/hass-motioneye.svg?style=flat-square)](LICENSE)
 [![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://hacs.xyz)
 [![BuyMeCoffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat-square)](https://www.buymeacoffee.com/dermotdu)
+
+# motionEye Home Assistant Integration
 
 The motionEye integration allows you to integrate your
 [motionEye](https://github.com/ccrisan/motioneye) server into Home Assistant. motionEye
