@@ -244,7 +244,6 @@ Parameters:
 | Parameter       | Description                                                               |
 | --------------- | ------------------------------------------------------------------------- |
 | `entity_id` `device_id` |An entity id or device id to set the text overlay on.|
-|
 
 Note: This is a thin wrapper on the [`motioneye.action` call](#action).
 
@@ -255,7 +254,7 @@ Trigger a motionEye action (see [MotionEye Action Buttons](https://github.com/cc
 
 | Parameter       | Description                                                               |
 | --------------- | ------------------------------------------------------------------------- |
-| `entity_id` `device_id` |An entity id or device id to set the text overlay on.|
+| `entity_id` `device_id`|An entity id or device id to set the text overlay on.|
 | `action`|A string representing the motionEye action to trigger. One of `snapshot`, `record_start`, `record_stop`, `lock`, `unlock`, `light_on`, `light_off`, `alarm_on`, `alarm_off`, `up`, `right`, `down`, `left`, `zoom_in`, `zoom_out`, `preset1`-`preset9`|
 
 Note: As of 2021-04-11 the `record_start` and `record_stop` action are not implemented in
