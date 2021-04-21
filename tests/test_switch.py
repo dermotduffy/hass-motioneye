@@ -7,6 +7,7 @@ from motioneye_client.const import (
     KEY_MOVIES,
     KEY_STILL_IMAGES,
     KEY_TEXT_OVERLAY,
+    KEY_UPLOAD_ENABLED,
     KEY_VIDEO_STREAMING,
 )
 from pytest_homeassistant_custom_component.common import async_fire_time_changed
@@ -102,10 +103,11 @@ async def test_switch_has_correct_entities(hass: HomeAssistantType) -> None:
 
     expected_switch_keys = [
         KEY_MOTION_DETECTION,
-        KEY_TEXT_OVERLAY,
-        KEY_VIDEO_STREAMING,
-        KEY_STILL_IMAGES,
         KEY_MOVIES,
+        KEY_STILL_IMAGES,
+        KEY_TEXT_OVERLAY,
+        KEY_UPLOAD_ENABLED,
+        KEY_VIDEO_STREAMING,
     ]
 
     for switch_key in expected_switch_keys:

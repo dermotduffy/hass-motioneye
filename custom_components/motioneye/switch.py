@@ -11,6 +11,7 @@ from motioneye_client.const import (
     KEY_NAME,
     KEY_STILL_IMAGES,
     KEY_TEXT_OVERLAY,
+    KEY_UPLOAD_ENABLED,
     KEY_VIDEO_STREAMING,
 )
 
@@ -38,6 +39,7 @@ MOTIONEYE_SWITCHES = [
     KEY_VIDEO_STREAMING,
     KEY_STILL_IMAGES,
     KEY_MOVIES,
+    KEY_UPLOAD_ENABLED,
 ]
 
 
