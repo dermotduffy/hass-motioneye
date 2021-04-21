@@ -94,7 +94,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_URL, default=user_input.get(CONF_URL)): cv.url,
+                    vol.Required(CONF_URL, default=user_input.get(CONF_URL, "")): str,
                     vol.Optional(
                         CONF_ADMIN_USERNAME, default=user_input.get(CONF_ADMIN_USERNAME)
                     ): str,
