@@ -7,7 +7,8 @@
         "error": {
             "cannot_connect": "Failed to connect",
             "invalid_auth": "Invalid authentication",
-            "unknown": "Unexpected error"
+            "unknown": "Unexpected error",
+            "invalid_url": "Invalid URL"
         },
         "step": {
             "user": {

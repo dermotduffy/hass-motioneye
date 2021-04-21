@@ -104,6 +104,31 @@ async def test_user_invalid_auth(hass: HomeAssistantType) -> None:
     assert result["errors"] == {"base": "invalid_auth"}
 
 
+async def test_user_invalid_url(hass: HomeAssistantType) -> None:
+    """Test invalid url is handled correctly."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+
+    with patch(
+        "custom_components.motioneye.config_flow.MotionEyeClient",
+        return_value=create_mock_motioneye_client(),
+    ):
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_URL: "not a url",
+                CONF_ADMIN_USERNAME: "admin-username",
+                CONF_ADMIN_PASSWORD: "admin-password",
+                CONF_SURVEILLANCE_USERNAME: "surveillance-username",
+                CONF_SURVEILLANCE_PASSWORD: "surveillance-password",
+            },
+        )
+
+    assert result["type"] == "form"
+    assert result["errors"] == {"base": "invalid_url"}
+
+
 async def test_user_cannot_connect(hass: HomeAssistantType) -> None:
     """Test connection failure is handled correctly."""
     result = await hass.config_entries.flow.async_init(
