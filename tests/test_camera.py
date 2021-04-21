@@ -248,7 +248,7 @@ async def test_get_stream_from_camera(
     stream_server = await aiohttp_server(app)
 
     client = create_mock_motioneye_client()
-    client.get_camera_steam_url = Mock(
+    client.get_camera_stream_url = Mock(
         return_value=f"http://localhost:{stream_server.port}/"
     )
     config_entry = create_mock_motioneye_config_entry(
@@ -355,7 +355,7 @@ async def test_camera_option_stream_url_template(
     with pytest.raises(HTTPBadGateway):
         await async_get_mjpeg_stream(hass, None, TEST_CAMERA_ENTITY_ID)
     assert stream_handler.called
-    assert not client.get_camera_steam_url.called
+    assert not client.get_camera_stream_url.called
 
 
 async def test_get_stream_from_camera_with_broken_host(
@@ -365,7 +365,7 @@ async def test_get_stream_from_camera_with_broken_host(
 
     client = create_mock_motioneye_client()
     config_entry = create_mock_motioneye_config_entry(hass, data={CONF_URL: "http://"})
-    client.get_camera_steam_url = Mock(side_effect=MotionEyeClientURLParseError)
+    client.get_camera_stream_url = Mock(side_effect=MotionEyeClientURLParseError)
 
     await setup_mock_motioneye_config_entry(
         hass, config_entry=config_entry, client=client

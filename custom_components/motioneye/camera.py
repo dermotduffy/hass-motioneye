@@ -146,7 +146,7 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
             streaming_url = Template(streaming_template).render(**camera)
         else:
             try:
-                streaming_url = self._client.get_camera_steam_url(camera)
+                streaming_url = self._client.get_camera_stream_url(camera)
             except MotionEyeClientURLParseError:
                 pass
         return {
