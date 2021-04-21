@@ -325,7 +325,7 @@ hass-motioneye](https://github.com/dermotduffy/hass-motioneye/projects/3).
 
 ### Updating underlying libraries
 
-   * Update [requirements_dev.txt](https://github.com/dermotduffy/hass-motioneye/blob/main/requirements_dev.txt)
+   * Update [requirements.txt](https://github.com/dermotduffy/hass-motioneye/blob/main/requirements.txt)
       * Used for CI building.
    * Update [custom_components/motioneye/manifest.json](https://github.com/dermotduffy/hass-motioneye/blob/main/custom_components/motioneye/manifest.json)
       * Used for Home Assistant.
