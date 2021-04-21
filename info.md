@@ -1,17 +1,3 @@
-{% if installed %}
-## Changes as compared to your installed version:
-
-### Breaking Changes
-
-### Features
-{% if version_installed.replace("v", "").replace(".","") | int < 10  %}
-- Added a toggle switch for video upload enable/disable.
-{% endif %}
-
-### Bugfixes
-
----
-{% endif %}
 # motionEye Home Assistant Integration
 
 The motionEye integration allows you to integrate your [motionEye](https://github.com/ccrisan/motioneye) server into Home Assistant. motionEye is an open source web-frontend for the motion daemon, used to centralize the management and visualization of multiple types of camera.
