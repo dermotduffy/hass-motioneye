@@ -40,7 +40,7 @@ async def test_user_success(hass: HomeAssistantType) -> None:
     mock_client = create_mock_motioneye_client()
 
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=mock_client,
     ), patch(
         "custom_components.motioneye.async_setup", return_value=True
@@ -85,7 +85,7 @@ async def test_user_invalid_auth(hass: HomeAssistantType) -> None:
     )
 
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=mock_client,
     ):
         result = await hass.config_entries.flow.async_configure(
@@ -111,7 +111,7 @@ async def test_user_invalid_url(hass: HomeAssistantType) -> None:
     )
 
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=create_mock_motioneye_client(),
     ):
         result = await hass.config_entries.flow.async_configure(
@@ -141,7 +141,7 @@ async def test_user_cannot_connect(hass: HomeAssistantType) -> None:
     )
 
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=mock_client,
     ):
         result = await hass.config_entries.flow.async_configure(
@@ -170,7 +170,7 @@ async def test_user_request_error(hass: HomeAssistantType) -> None:
     mock_client.async_client_login = AsyncMock(side_effect=MotionEyeClientRequestError)
 
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=mock_client,
     ):
         result = await hass.config_entries.flow.async_configure(
@@ -219,7 +219,7 @@ async def test_reauth(hass: HomeAssistantType) -> None:
     }
 
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=mock_client,
     ), patch(
         "custom_components.motioneye.async_setup", return_value=True
@@ -248,7 +248,7 @@ async def test_options(hass: HomeAssistantType) -> None:
 
     client = create_mock_motioneye_client()
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=client,
     ), patch("custom_components.motioneye.async_setup", return_value=True), patch(
         "custom_components.motioneye.async_setup_entry", return_value=True
@@ -280,7 +280,7 @@ async def test_advanced_options(hass: HomeAssistantType) -> None:
 
     client = create_mock_motioneye_client()
     with patch(
-        "custom_components.motioneye.config_flow.MotionEyeClient",
+        "custom_components.motioneye.MotionEyeClient",
         return_value=client,
     ), patch("custom_components.motioneye.async_setup", return_value=True), patch(
         "custom_components.motioneye.async_setup_entry", return_value=True

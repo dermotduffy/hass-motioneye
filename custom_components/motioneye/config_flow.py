@@ -5,7 +5,6 @@ import logging
 from typing import Any
 
 from motioneye_client.client import (
-    MotionEyeClient,
     MotionEyeClientConnectionError,
     MotionEyeClientInvalidAuthError,
     MotionEyeClientRequestError,
@@ -24,6 +23,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
+from . import create_motioneye_client
 from .const import (
     CONF_ADMIN_USERNAME,
     CONF_CONFIG_ENTRY,
@@ -64,7 +64,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             except vol.Invalid:
                 errors["base"] = "invalid_url"
             else:
-                client = MotionEyeClient(
+                client = create_motioneye_client(
                     user_input[CONF_URL],
                     admin_username=user_input.get(CONF_ADMIN_USERNAME),
                     admin_password=user_input.get(CONF_ADMIN_PASSWORD),
