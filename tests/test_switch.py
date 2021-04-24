@@ -19,8 +19,8 @@ from custom_components.motioneye.const import (
 )
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
 from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_OFF, SERVICE_TURN_ON
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.typing import HomeAssistantType
 import homeassistant.util.dt as dt_util
 
 from . import (
@@ -35,7 +35,7 @@ from . import (
 )
 
 
-async def test_switch_turn_on_off(hass: HomeAssistantType) -> None:
+async def test_switch_turn_on_off(hass: HomeAssistant) -> None:
     """Test turning the switch on and off."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -95,7 +95,7 @@ async def test_switch_turn_on_off(hass: HomeAssistantType) -> None:
     assert entity_state.state == "on"
 
 
-async def test_switch_has_correct_entities(hass: HomeAssistantType) -> None:
+async def test_switch_has_correct_entities(hass: HomeAssistant) -> None:
     """Test that the correct switch entities are created."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -115,7 +115,7 @@ async def test_switch_has_correct_entities(hass: HomeAssistantType) -> None:
         assert entity_state, f"Couldn't find entity: {entity_id}"
 
 
-async def test_switch_device_info(hass: HomeAssistantType) -> None:
+async def test_switch_device_info(hass: HomeAssistant) -> None:
     """Verify device information includes expected details."""
     client = create_mock_motioneye_client()
     config_entry = await setup_mock_motioneye_config_entry(hass, client=client)

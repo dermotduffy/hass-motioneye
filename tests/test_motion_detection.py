@@ -26,8 +26,8 @@ from custom_components.motioneye.const import (
 )
 from homeassistant.config import async_process_ha_core_config
 from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.setup import async_setup_component
 
 from . import (
@@ -58,7 +58,7 @@ WEB_HOOK_FILE_STORED_QUERY_STRING = (
 )
 
 
-async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
+async def test_setup_camera_without_webhook(hass: HomeAssistant) -> None:
     """Test a camera with no webhook."""
     await async_process_ha_core_config(
         hass,
@@ -94,7 +94,7 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
 
 
 async def test_setup_camera_with_wrong_webhook(
-    hass: HomeAssistantType,
+    hass: HomeAssistant,
 ) -> None:
     """Test camera with wrong web hook."""
     await async_process_ha_core_config(
@@ -153,7 +153,7 @@ async def test_setup_camera_with_wrong_webhook(
 
 
 async def test_setup_camera_with_old_webhook(
-    hass: HomeAssistantType,
+    hass: HomeAssistant,
 ) -> None:
     """Verify that webhooks are overwritten if they are from this integration.
 
@@ -209,7 +209,7 @@ async def test_setup_camera_with_old_webhook(
 
 
 async def test_setup_camera_with_correct_webhook(
-    hass: HomeAssistantType,
+    hass: HomeAssistant,
 ) -> None:
     """Verify that webhooks are not overwritten if they are already correct."""
 
@@ -254,7 +254,7 @@ async def test_setup_camera_with_correct_webhook(
     assert not client.async_set_camera.called
 
 
-async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
+async def test_good_query(hass: HomeAssistant, aiohttp_client: Any) -> None:
     """Test good callbacks."""
     await async_setup_component(hass, "http", {"http": {}})
 
@@ -289,9 +289,7 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
         }
 
 
-async def test_bad_query_wrong_url(
-    hass: HomeAssistantType, aiohttp_client: Any
-) -> None:
+async def test_bad_query_wrong_url(hass: HomeAssistant, aiohttp_client: Any) -> None:
     """Test an incorrect query."""
     await async_setup_component(hass, "http", {"http": {}})
     await setup_mock_motioneye_config_entry(hass)
@@ -305,9 +303,7 @@ async def test_bad_query_wrong_url(
     assert resp.status == HTTP_NOT_FOUND
 
 
-async def test_bad_query_no_device(
-    hass: HomeAssistantType, aiohttp_client: Any
-) -> None:
+async def test_bad_query_no_device(hass: HomeAssistant, aiohttp_client: Any) -> None:
     """Test a correct query with incorrect device."""
     await async_setup_component(hass, "http", {"http": {}})
     await setup_mock_motioneye_config_entry(hass)

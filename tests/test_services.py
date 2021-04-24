@@ -21,8 +21,8 @@ from custom_components.motioneye.const import (
     SERVICE_SNAPSHOT,
 )
 from homeassistant.const import ATTR_DEVICE_ID, ATTR_ENTITY_ID
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.typing import HomeAssistantType
 
 from . import (
     TEST_CAMERA,
@@ -36,7 +36,7 @@ from . import (
 _LOGGER = logging.getLogger(__name__)
 
 
-async def test_text_overlay_bad_extra_key(hass: HomeAssistantType) -> None:
+async def test_text_overlay_bad_extra_key(hass: HomeAssistant) -> None:
     """Test text overlay with incorrect input data."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -46,7 +46,7 @@ async def test_text_overlay_bad_extra_key(hass: HomeAssistantType) -> None:
         await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
 
 
-async def test_text_overlay_bad_device_unique_id(hass: HomeAssistantType) -> None:
+async def test_text_overlay_bad_device_unique_id(hass: HomeAssistant) -> None:
     """Test text overlay with incorrect input data."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -69,7 +69,7 @@ async def test_text_overlay_bad_device_unique_id(hass: HomeAssistantType) -> Non
     assert not client.async_set_camera.called
 
 
-async def test_text_overlay_bad_empty(hass: HomeAssistantType) -> None:
+async def test_text_overlay_bad_empty(hass: HomeAssistant) -> None:
     """Test text overlay with incorrect input data."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -78,7 +78,7 @@ async def test_text_overlay_bad_empty(hass: HomeAssistantType) -> None:
         await hass.async_block_till_done()
 
 
-async def test_setup_text_overlay_bad_no_left_or_right(hass: HomeAssistantType) -> None:
+async def test_setup_text_overlay_bad_no_left_or_right(hass: HomeAssistant) -> None:
     """Test text overlay with incorrect input data."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -89,7 +89,7 @@ async def test_setup_text_overlay_bad_no_left_or_right(hass: HomeAssistantType) 
         await hass.async_block_till_done()
 
 
-async def test_text_overlay_good_left(hass: HomeAssistantType) -> None:
+async def test_text_overlay_good_left(hass: HomeAssistant) -> None:
     """Test a working text overlay with device_id."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -116,7 +116,7 @@ async def test_text_overlay_good_left(hass: HomeAssistantType) -> None:
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
 
-async def test_text_overlay_good_entity_id(hass: HomeAssistantType) -> None:
+async def test_text_overlay_good_entity_id(hass: HomeAssistant) -> None:
     """Test a working text overlay with entity_id."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -135,7 +135,7 @@ async def test_text_overlay_good_entity_id(hass: HomeAssistantType) -> None:
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
 
 
-async def test_text_overlay_missing_device(hass: HomeAssistantType) -> None:
+async def test_text_overlay_missing_device(hass: HomeAssistant) -> None:
     """Test a working text overlay."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -151,7 +151,7 @@ async def test_text_overlay_missing_device(hass: HomeAssistantType) -> None:
     assert not client.async_set_camera.called
 
 
-async def test_text_overlay_no_such_camera(hass: HomeAssistantType) -> None:
+async def test_text_overlay_no_such_camera(hass: HomeAssistant) -> None:
     """Test a working text overlay."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -166,7 +166,7 @@ async def test_text_overlay_no_such_camera(hass: HomeAssistantType) -> None:
     assert not client.async_set_camera.called
 
 
-async def test_action(hass: HomeAssistantType) -> None:
+async def test_action(hass: HomeAssistant) -> None:
     """Test an action."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
@@ -180,7 +180,7 @@ async def test_action(hass: HomeAssistantType) -> None:
     assert client.async_action.call_args == call(TEST_CAMERA_ID, data[CONF_ACTION])
 
 
-async def test_snapshot(hass: HomeAssistantType) -> None:
+async def test_snapshot(hass: HomeAssistant) -> None:
     """Test snapshot."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
