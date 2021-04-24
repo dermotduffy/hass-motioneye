@@ -32,7 +32,7 @@ from homeassistant.setup import async_setup_component
 
 from . import (
     TEST_CAMERA,
-    TEST_CAMERA_DEVICE_ID,
+    TEST_CAMERA_DEVICE_IDENTIFIER,
     TEST_CAMERA_ID,
     TEST_CAMERA_NAME,
     TEST_CAMERAS,
@@ -70,7 +70,7 @@ async def test_setup_camera_without_webhook(hass: HomeAssistantType) -> None:
 
     device_registry = await dr.async_get_registry(hass)
     device = device_registry.async_get_device(
-        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)}
+        identifiers={TEST_CAMERA_DEVICE_IDENTIFIER}
     )
     assert device
 
@@ -130,7 +130,7 @@ async def test_setup_camera_with_wrong_webhook(
 
     device_registry = await dr.async_get_registry(hass)
     device = device_registry.async_get_device(
-        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)}
+        identifiers={TEST_CAMERA_DEVICE_IDENTIFIER}
     )
     assert device
 
@@ -186,7 +186,7 @@ async def test_setup_camera_with_old_webhook(
 
     device_registry = await dr.async_get_registry(hass)
     device = device_registry.async_get_device(
-        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)}
+        identifiers={TEST_CAMERA_DEVICE_IDENTIFIER}
     )
     assert device
 
@@ -224,7 +224,7 @@ async def test_setup_camera_with_correct_webhook(
     device_registry = await dr.async_get_registry(hass)
     device = device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
-        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)},
+        identifiers={TEST_CAMERA_DEVICE_IDENTIFIER},
     )
 
     cameras = copy.deepcopy(TEST_CAMERAS)
@@ -264,7 +264,7 @@ async def test_good_query(hass: HomeAssistantType, aiohttp_client: Any) -> None:
 
     device = device_registry.async_get_or_create(
         config_entry_id=config_entry.entry_id,
-        identifiers={(DOMAIN, TEST_CAMERA_DEVICE_ID)},
+        identifiers={TEST_CAMERA_DEVICE_IDENTIFIER},
     )
 
     data = {

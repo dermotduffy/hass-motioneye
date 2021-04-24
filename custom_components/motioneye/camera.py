@@ -38,7 +38,7 @@ from homeassistant.helpers.update_coordinator import (
 
 from . import (
     get_camera_from_cameras,
-    get_motioneye_device_unique_id,
+    get_motioneye_device_identifier,
     get_motioneye_entity_unique_id,
     is_acceptable_camera,
     listen_for_new_cameras,
@@ -106,7 +106,7 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
         self._surveillance_password = password
         self._client = client
         self._camera_id = camera[KEY_ID]
-        self._device_id = get_motioneye_device_unique_id(
+        self._device_identifier = get_motioneye_device_identifier(
             config_entry_id, self._camera_id
         )
         self._unique_id = get_motioneye_entity_unique_id(
@@ -128,6 +128,7 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
         )
         CoordinatorEntity.__init__(self, coordinator)
 
+    @callback  # type: ignore[misc]
     def _get_mjpeg_camera_properties_for_camera(
         self, camera: dict[str, Any]
     ) -> dict[str, Any]:
@@ -158,6 +159,7 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
             CONF_AUTHENTICATION: auth,
         }
 
+    @callback  # type: ignore[misc]
     def _set_mjpeg_camera_state_for_camera(self, camera: dict[str, Any]) -> None:
         """Set the internal state to match the given camera."""
 
@@ -218,4 +220,4 @@ class MotionEyeMjpegCamera(MjpegCamera, CoordinatorEntity):  # type: ignore[misc
     @property
     def device_info(self) -> dict[str, Any]:
         """Return the device information."""
-        return {"identifiers": {(DOMAIN, self._device_id)}}
+        return {"identifiers": {self._device_identifier}}
