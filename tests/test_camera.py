@@ -299,13 +299,13 @@ async def test_device_info(hass: HomeAssistantType) -> None:
     client = create_mock_motioneye_client()
     entry = await setup_mock_motioneye_config_entry(hass, client=client)
 
-    device_identifiers = get_motioneye_device_identifier(entry.entry_id, TEST_CAMERA_ID)
+    device_identifier = get_motioneye_device_identifier(entry.entry_id, TEST_CAMERA_ID)
     device_registry = dr.async_get(hass)
 
-    device = device_registry.async_get_device({device_identifiers})
+    device = device_registry.async_get_device({device_identifier})
     assert device
     assert device.config_entries == {TEST_CONFIG_ENTRY_ID}
-    assert device.identifiers == {device_identifiers}
+    assert device.identifiers == {device_identifier}
     assert device.manufacturer == MOTIONEYE_MANUFACTURER
     assert device.model == MOTIONEYE_MANUFACTURER
     assert device.name == TEST_CAMERA_NAME

@@ -87,7 +87,7 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
         )
         self._client = client
         self._camera_id = camera[KEY_ID]
-        self._device_identifiers = get_motioneye_device_identifier(
+        self._device_identifier = get_motioneye_device_identifier(
             config_entry_id, self._camera_id
         )
         self._unique_id = get_motioneye_entity_unique_id(
@@ -136,7 +136,7 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
     @property
     def device_info(self) -> dict[str, Any] | None:
         """Return the device information."""
-        return {"identifiers": {self._device_identifiers}}
+        return {"identifiers": {self._device_identifier}}
 
     @callback  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:
