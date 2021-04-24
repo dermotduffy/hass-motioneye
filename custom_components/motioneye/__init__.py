@@ -88,7 +88,6 @@ from .const import (
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
     CONF_CLIENT,
-    CONF_CONFIG_ENTRY,
     CONF_COORDINATOR,
     CONF_ON_UNLOAD,
     CONF_SURVEILLANCE_PASSWORD,
@@ -223,7 +222,6 @@ async def _create_reauth_flow(
             DOMAIN,
             context={
                 CONF_SOURCE: SOURCE_REAUTH,
-                CONF_CONFIG_ENTRY: config_entry,
             },
             data=config_entry.data,
         )
