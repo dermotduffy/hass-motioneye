@@ -55,7 +55,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             user_input: ConfigType, errors: dict[str, str] | None = None
         ) -> dict[str, Any]:
             """Show the form to the user."""
-            out: dict[str, Any] = self.async_show_form(
+            return self.async_show_form(  # type: ignore[no-any-return]
                 step_id="user",
                 data_schema=vol.Schema(
                     {
@@ -82,7 +82,6 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
                 ),
                 errors=errors,
             )
-            return out
 
         reauth_entry = None
         if self.context.get("entry_id"):
@@ -90,7 +89,6 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
                 self.context["entry_id"]
             )
 
-        out: dict[str, Any] = {}
         if user_input is None:
             return _get_form(reauth_entry.data if reauth_entry else {})
 
@@ -109,16 +107,20 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             surveillance_password=user_input.get(CONF_SURVEILLANCE_PASSWORD),
         )
 
+        errors = {}
         try:
             await client.async_client_login()
         except MotionEyeClientConnectionError:
-            return _get_form(user_input, {"base": "cannot_connect"})
+            errors["base"] = "cannot_connect"
         except MotionEyeClientInvalidAuthError:
-            return _get_form(user_input, {"base": "invalid_auth"})
+            errors["base"] = "invalid_auth"
         except MotionEyeClientRequestError:
-            return _get_form(user_input, {"base": "unknown"})
+            errors["base"] = "unknown"
         finally:
             await client.async_client_close()
+
+        if errors:
+            return _get_form(user_input, errors)
 
         if self.context.get(CONF_SOURCE) == SOURCE_REAUTH and reauth_entry is not None:
             self.hass.config_entries.async_update_entry(reauth_entry, data=user_input)
@@ -126,21 +128,18 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             # installed because the initial load did not succeed (the reauth
             # flow will not be initiated if the load succeeds).
             await self.hass.config_entries.async_reload(reauth_entry.entry_id)
-            out = self.async_abort(reason="reauth_successful")
-            return out
+            return self.async_abort(reason="reauth_successful")  # type: ignore[no-any-return]
 
         # Search for duplicates: there isn't a useful unique_id, but
         # at least prevent entries with the same motionEye URL.
-        for existing_entry in self.hass.config_entries.async_entries(DOMAIN):
+        for existing_entry in self._async_current_entries(include_ignore=False):
             if existing_entry.data.get(CONF_URL) == user_input[CONF_URL]:
-                out = self.async_abort(reason="already_configured")
-                return out
+                return self.async_abort(reason="already_configured")  # type: ignore[no-any-return]
 
-        out = self.async_create_entry(
+        return self.async_create_entry(  # type: ignore[no-any-return]
             title=f"{user_input[CONF_URL]}",
             data=user_input,
         )
-        return out
 
     async def async_step_reauth(
         self,
@@ -167,11 +166,8 @@ class MotionEyeOptionsFlow(OptionsFlow):  # type: ignore[misc]
         self, user_input: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """Manage the options."""
-        out: dict[str, Any] = {}
-
         if user_input is not None:
-            out = self.async_create_entry(title="", data=user_input)
-            return out
+            return self.async_create_entry(title="", data=user_input)  # type: ignore[no-any-return]
 
         schema: dict[Any, Any] = {
             vol.Required(
@@ -203,5 +199,4 @@ class MotionEyeOptionsFlow(OptionsFlow):  # type: ignore[misc]
                 )
             ] = str
 
-        out = self.async_show_form(step_id="init", data_schema=vol.Schema(schema))
-        return out
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(schema))  # type: ignore[no-any-return]
