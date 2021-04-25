@@ -1,4 +1,4 @@
-"""Test the motionEye camera."""
+"""Test the motionEye camera web hooks."""
 import copy
 import logging
 from typing import Any
