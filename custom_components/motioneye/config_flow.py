@@ -25,6 +25,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from . import create_motioneye_client
 from .const import (
+    CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
     CONF_STREAM_URL_TEMPLATE,
     CONF_SURVEILLANCE_PASSWORD,
@@ -35,7 +36,6 @@ from .const import (
     DEFAULT_WEBHOOK_SET_OVERWRITE,
     DOMAIN,
 )
-from .const import CONF_ADMIN_PASSWORD  # pylint:disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
 
