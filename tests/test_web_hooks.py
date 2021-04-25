@@ -90,7 +90,6 @@ async def test_setup_camera_without_webhook(hass: HomeAssistant) -> None:
     )
 
     assert client.async_set_camera.call_args == call(TEST_CAMERA_ID, expected_camera)
-    _LOGGER.error(expected_camera)
 
 
 async def test_setup_camera_with_wrong_webhook(
