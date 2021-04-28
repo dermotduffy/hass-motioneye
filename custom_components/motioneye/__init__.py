@@ -158,9 +158,23 @@ def create_motioneye_client(
 
 def get_motioneye_device_identifier(
     config_entry_id: str, camera_id: int
-) -> tuple[str, str, int]:
+) -> tuple[str, str]:
     """Get the identifiers for a motionEye device."""
-    return (DOMAIN, config_entry_id, camera_id)
+    return (DOMAIN, f"{config_entry_id}_{camera_id}")
+
+
+def split_motioneye_device_identifier(
+    identifier: tuple[str, str]
+) -> tuple[str, str, int] | None:
+    """Get the identifiers for a motionEye device."""
+    if len(identifier) != 2 or identifier[0] != DOMAIN or "_" not in identifier[1]:
+        return None
+    config_id, camera_id_str = identifier[1].split("_", 1)
+    try:
+        camera_id = int(camera_id_str)
+    except ValueError:
+        return None
+    return (DOMAIN, config_id, camera_id)
 
 
 def get_motioneye_entity_unique_id(
@@ -236,7 +250,7 @@ def _add_camera(
     entry: ConfigEntry,
     camera_id: int,
     camera: dict[str, Any],
-    device_identifier: tuple[str, str, int],
+    device_identifier: tuple[str, str],
 ) -> None:
     """Add a motionEye camera to hass."""
 
@@ -375,13 +389,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         CONF_ON_UNLOAD: [],
     }
 
-    current_cameras: set[tuple[str, str, int]] = set()
+    current_cameras: set[tuple[str, str]] = set()
     device_registry = await dr.async_get_registry(hass)
 
     @callback  # type: ignore[misc]
     def _async_process_motioneye_cameras() -> None:
         """Process motionEye camera additions and removals."""
-        inbound_camera: set[tuple[str, str, int]] = set()
+        inbound_camera: set[tuple[str, str]] = set()
+        assert coordinator.data is not None
         if KEY_CAMERAS not in coordinator.data:
             return
 
@@ -556,12 +571,11 @@ class MotionEyeServices:
                 self._hass.data[DOMAIN].get(config_entry_id, {}).get(CONF_CLIENT)
             )
 
-            for identifiers in entry.identifiers:
-                if len(identifiers) != 3:
-                    continue
-                if identifiers[0] == DOMAIN:
-                    output.add((client, identifiers[2]))
-                    break
+            for identifier in entry.identifiers:
+                data = split_motioneye_device_identifier(identifier)
+                if data is not None:
+                    output.add((client, data[2]))
+                break
         return output
 
     async def _async_set_text_overlay(self, service: ServiceCall) -> None:

@@ -166,6 +166,7 @@ async def test_setup_camera_new_data_error(hass: HomeAssistant) -> None:
     async_fire_time_changed(hass, dt_util.utcnow() + DEFAULT_SCAN_INTERVAL)
     await hass.async_block_till_done()
     entity_state = hass.states.get(TEST_CAMERA_ENTITY_ID)
+    assert entity_state
     assert entity_state.state == "unavailable"
 
 
@@ -174,6 +175,7 @@ async def test_setup_camera_new_data_without_streaming(hass: HomeAssistant) -> N
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
     entity_state = hass.states.get(TEST_CAMERA_ENTITY_ID)
+    assert entity_state
     assert entity_state.state == "idle"
 
     cameras = copy.deepcopy(TEST_CAMERAS)
@@ -182,6 +184,7 @@ async def test_setup_camera_new_data_without_streaming(hass: HomeAssistant) -> N
     async_fire_time_changed(hass, dt_util.utcnow() + DEFAULT_SCAN_INTERVAL)
     await hass.async_block_till_done()
     entity_state = hass.states.get(TEST_CAMERA_ENTITY_ID)
+    assert entity_state
     assert entity_state.state == "unavailable"
 
 
