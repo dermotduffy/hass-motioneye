@@ -26,6 +26,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import HomeAssistantType
 
+from . import split_motioneye_device_identifier
 from .const import CONF_CLIENT, DOMAIN
 
 MIME_TYPE_MAP = {
@@ -151,13 +152,9 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
     ) -> dr.DeviceEntry:
         """Get a config entry from a URL."""
         for identifier in device.identifiers:
-            if (
-                len(identifier) == 3
-                and identifier[0] == DOMAIN
-                and identifier[1] == config.entry_id
-            ):
-                return identifier[2]
-
+            data = split_motioneye_device_identifier(identifier)
+            if data is not None:
+                return data[2]
         raise MediaSourceError(f"Could not find camera id for device id: {device.id}")
 
     def _build_media_config(self, config: ConfigEntry) -> BrowseMediaSource:
