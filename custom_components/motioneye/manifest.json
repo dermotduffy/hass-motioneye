@@ -4,9 +4,9 @@
   "documentation": "https://github.com/dermotduffy/hass-motioneye",
   "issue_tracker": "https://github.com/dermotduffy/hass-motioneye/issues",
   "config_flow": true,
-  "dependencies": ["http"],
+  "dependencies": ["http", "media_source"],
   "requirements": [
-    "motioneye-client==0.3.2"
+    "motioneye-client==0.3.3"
   ],
   "codeowners": [
     "@dermotduffy"
