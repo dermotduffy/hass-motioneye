@@ -46,8 +46,8 @@ async def test_text_overlay_bad_extra_key(hass: HomeAssistant) -> None:
         await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
 
 
-async def test_text_overlay_bad_device_unique_id(hass: HomeAssistant) -> None:
-    """Test text overlay with incorrect input data."""
+async def test_text_overlay_bad_device_identifier(hass: HomeAssistant) -> None:
+    """Test text overlay with bad device identifier."""
     client = create_mock_motioneye_client()
     await setup_mock_motioneye_config_entry(hass, client=client)
     device = dr.async_entries_for_config_entry(
@@ -55,15 +55,24 @@ async def test_text_overlay_bad_device_unique_id(hass: HomeAssistant) -> None:
     )[0]
     device_registry = await dr.async_get_registry(hass)
 
-    # Set the device_unique_id to something broken (non-int camera index).
-    device_registry.async_update_device(
-        device_id=device.id, new_identifiers={(DOMAIN, "host:port_str")}
-    )
-
     data = {
         ATTR_DEVICE_ID: device.id,
         KEY_TEXT_OVERLAY_LEFT: KEY_TEXT_OVERLAY_TIMESTAMP,
     }
+
+    # Set the device identifier to have a non-int camera_id.
+    device_registry.async_update_device(
+        device_id=device.id, new_identifiers={(DOMAIN, "host:port_str")}
+    )
+
+    await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
+    await hass.async_block_till_done()
+    assert not client.async_set_camera.called
+
+    # Set the device_unique_id to have the wrong number of values.
+    device_registry.async_update_device(
+        device_id=device.id, new_identifiers={(DOMAIN, "host:port", "another")}
+    )
     await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
     await hass.async_block_till_done()
     assert not client.async_set_camera.called

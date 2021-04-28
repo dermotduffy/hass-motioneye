@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from motioneye_client.client import (
     MotionEyeClientConnectionError,
@@ -90,7 +90,9 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
             )
 
         if user_input is None:
-            return _get_form(reauth_entry.data if reauth_entry else {})
+            return _get_form(
+                cast(ConfigType, reauth_entry.data) if reauth_entry else {}
+            )
 
         try:
             # Cannot use cv.url validation in the schema itself, so
