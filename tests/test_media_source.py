@@ -198,6 +198,7 @@ async def test_async_browse_media_success(hass: HomeAssistant) -> None:
         ],
     }
 
+    client.get_movie_url = Mock(return_value="http://movie")
     media = await media_source.async_browse_media(
         hass,
         f"{const.URI_SCHEME}{DOMAIN}/{config.entry_id}#{device.id}#movies#/2021-04-25",
@@ -220,7 +221,7 @@ async def test_async_browse_media_success(hass: HomeAssistant) -> None:
                 "can_play": True,
                 "can_expand": False,
                 "children_media_class": None,
-                "thumbnail": None,
+                "thumbnail": "http://movie",
             },
             {
                 "title": "00-36-49.mp4",
@@ -230,7 +231,7 @@ async def test_async_browse_media_success(hass: HomeAssistant) -> None:
                 "can_play": True,
                 "can_expand": False,
                 "children_media_class": None,
-                "thumbnail": None,
+                "thumbnail": "http://movie",
             },
             {
                 "title": "00-02-27.mp4",
@@ -240,7 +241,7 @@ async def test_async_browse_media_success(hass: HomeAssistant) -> None:
                 "can_play": True,
                 "can_expand": False,
                 "children_media_class": None,
-                "thumbnail": None,
+                "thumbnail": "http://movie",
             },
         ],
     }
@@ -259,6 +260,8 @@ async def test_async_browse_media_images_success(hass: HomeAssistant) -> None:
     )
 
     client.async_get_images = AsyncMock(return_value=TEST_IMAGES)
+    client.get_image_url = Mock(return_value="http://image")
+
     media = await media_source.async_browse_media(
         hass,
         f"{const.URI_SCHEME}{DOMAIN}/{config.entry_id}#{device.id}#images#/2021-04-12",
@@ -281,7 +284,7 @@ async def test_async_browse_media_images_success(hass: HomeAssistant) -> None:
                 "can_play": True,
                 "can_expand": False,
                 "children_media_class": None,
-                "thumbnail": None,
+                "thumbnail": "http://image",
             }
         ],
     }

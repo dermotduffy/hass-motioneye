@@ -294,6 +294,15 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
 
                 # Child is a media file.
                 if len(parts) + 1 == len(parts_media):
+                    if kind == "movies":
+                        thumbnail_url = client.get_movie_url(
+                            camera_id, full_child_path, preview=True
+                        )
+                    else:
+                        thumbnail_url = client.get_image_url(
+                            camera_id, full_child_path, preview=True
+                        )
+
                     base.children.append(
                         BrowseMediaSource(
                             domain=DOMAIN,
@@ -303,6 +312,7 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
                             title=display_child_path,
                             can_play=True,
                             can_expand=False,
+                            thumbnail=thumbnail_url,
                         )
                     )
 
