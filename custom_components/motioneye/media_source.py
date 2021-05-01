@@ -47,7 +47,7 @@ _LOGGER = logging.getLogger(__name__)
 # url (e.g. http://my-motioneye-1, http://my-motioneye-2)
 # -> Camera (e.g. "Office", "Kitchen")
 #   -> kind (e.g. Images, Movies)
-#     -> path folder hierarchy as configured on motionEye
+#     -> path hierarchy as configured on motionEye
 
 
 async def async_get_media_source(hass: HomeAssistantType) -> MotionEyeMediaSource:
@@ -79,6 +79,7 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
         device = self._get_device_or_raise(device_id)
         camera_id = self._get_camera_id_or_raise(config, device)
         self._verify_kind_or_raise(kind)
+        path = self._get_path_or_raise(path)
 
         client = self.hass.data[DOMAIN][config.entry_id][CONF_CLIENT]
         try:
@@ -115,6 +116,7 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
                 device = self._get_device_or_raise(device_id)
             if kind:
                 self._verify_kind_or_raise(kind)
+            path = self._get_path_or_raise(path)
 
             if kind:
                 return await self._build_media_path(config, device, kind, path)
@@ -144,6 +146,16 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
         if kind in MEDIA_CLASS_MAP:
             return
         raise MediaSourceError(f"Unknown media type: {kind}")
+
+    def _get_path_or_raise(self, path: str | None) -> str:
+        """Verify path is a valid motionEye path."""
+        if not path:
+            return "/"
+        if PurePath(path).root == "/":
+            return path
+        raise MediaSourceError(
+            f"motionEye media path must start with '/', received: {path}"
+        )
 
     def _get_camera_id_or_raise(
         self, config: ConfigEntry, device: dr.DeviceEntry
@@ -248,17 +260,15 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
         config: ConfigEntry,
         device: dr.DeviceEntry,
         kind: str,
-        path: str | None,
+        path: str,
     ) -> BrowseMediaSource:
         """Build the media sources for media kinds."""
         base = self._build_media_kind(config, device, kind)
 
-        # Media paths from motionEye start with a /.
-        if not path:
-            path = "/"
-        else:
-            # Don't include the leading / in the title.
-            base.title += " " + str(PurePath(*PurePath(path).parts[1:]))
+        parsed_path = PurePath(path)
+        if path != "/":
+            base.title += " " + str(PurePath(*parsed_path.parts[1:]))
+
         base.children = []
 
         client = self.hass.data[DOMAIN][config.entry_id][CONF_CLIENT]
@@ -270,7 +280,7 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
             resp = await client.async_get_images(camera_id)
 
         sub_dirs: set[str] = set()
-        parts = PurePath(path).parts
+        parts = parsed_path.parts
         for media in resp.get(KEY_MEDIA_LIST, []):
             if (
                 KEY_PATH not in media

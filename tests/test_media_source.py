@@ -307,19 +307,19 @@ async def test_async_resolve_media_success(hass: HomeAssistant) -> None:
     client.get_movie_url = Mock(return_value="http://movie-url")
     media = await media_source.async_resolve_media(
         hass,
-        f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{device.id}#movies#foo.mp4",
+        f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{device.id}#movies#/foo.mp4",
     )
     assert media == PlayMedia(url="http://movie-url", mime_type="video/mp4")
-    assert client.get_movie_url.call_args == call(TEST_CAMERA_ID, "foo.mp4")
+    assert client.get_movie_url.call_args == call(TEST_CAMERA_ID, "/foo.mp4")
 
     # Test successful resolve for an image.
     client.get_image_url = Mock(return_value="http://image-url")
     media = await media_source.async_resolve_media(
         hass,
-        f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{device.id}#images#foo.jpg",
+        f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{device.id}#images#/foo.jpg",
     )
     assert media == PlayMedia(url="http://image-url", mime_type="image/jpeg")
-    assert client.get_image_url.call_args == call(TEST_CAMERA_ID, "foo.jpg")
+    assert client.get_image_url.call_args == call(TEST_CAMERA_ID, "/foo.jpg")
 
 
 async def test_async_resolve_media_failure(hass: HomeAssistant) -> None:
@@ -375,6 +375,14 @@ async def test_async_resolve_media_failure(hass: HomeAssistant) -> None:
     # Playback URL raises exception.
     client.get_movie_url = Mock(side_effect=MotionEyeClientPathError)
     with pytest.raises(Unresolvable):
+        await media_source.async_resolve_media(
+            hass,
+            f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{device.id}#movies#/foo.mp4",
+        )
+
+    # Media path does not start with '/'
+    client.get_movie_url = Mock(side_effect=MotionEyeClientPathError)
+    with pytest.raises(MediaSourceError):
         await media_source.async_resolve_media(
             hass,
             f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{device.id}#movies#foo.mp4",
