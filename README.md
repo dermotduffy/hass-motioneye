@@ -311,7 +311,8 @@ correctly associate media with the camera from which that media was captured.
 
 ### Set text overlay when alarm is armed
 
-<img src="images/screenshot-alarm-armed-automation.png" alt="hass-motioneye alarm automation" style="float: right; margin: 10px 0px 20px 20px;" />
+A simple automation to set text overlay indicating the alarm armed status. Text overlay
+must be switched on for this automation to work (controllable via `switch.<name>_text_overlay`).
 
 ```yaml
 - alias: 'Set camera text overlay to armed'
@@ -340,6 +341,8 @@ correctly associate media with the camera from which that media was captured.
         left_text: custom-text
         custom_left_text: Alarm is disarmed
 ```
+
+<img src="images/screenshot-alarm-armed-automation.png" alt="hass-motioneye alarm automation" />
 
 ## Debugging
 
