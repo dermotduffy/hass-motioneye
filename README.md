@@ -295,7 +295,7 @@ target:
 Saved motionEye media (movies and images) can be natively browsed from the Home Assistant "Media
 Browser".
 
-<img src="images/screenshot-media-browser.png" alt="hass-motioneye Media Browser screenshot" style="border: 1px solid" />
+<img src="images/screenshot-media-browser.png" alt="hass-motioneye Media Browser screenshot" />
 
 ### Manually Configured Root Directories
 
@@ -306,6 +306,40 @@ root directory, motionEye will return the _combination_ of the media items when 
 of the "overlapping" cameras are queried. Use different root directories (in motionEye:
 `File Storage -> Root Directory`) to ensure motionEye (and thus this integration) will
 correctly associate media with the camera from which that media was captured.
+
+## Example Automations
+
+### Set text overlay when alarm is armed
+
+<img src="images/screenshot-alarm-armed-automation.png" alt="hass-motioneye alarm automation" style="float: right; margin: 10px 0px 20px 20px;" />
+
+```yaml
+- alias: 'Set camera text overlay to armed'
+  trigger:
+    platform: state
+    entity_id: alarm_control_panel.home_alarm
+    to: 'armed_away'
+  action:
+    - service: motioneye.set_text_overlay
+      target:
+        entity_id: camera.living_room
+      data:
+        left_text: custom-text
+        custom_left_text: Alarm is ARMED
+
+- alias: 'Set camera text overlay do disarmed'
+  trigger:
+    platform: state
+    entity_id: alarm_control_panel.home_alarm
+    to: 'disarmed'
+  action:
+    - service: motioneye.set_text_overlay
+      target:
+        entity_id: camera.living_room
+      data:
+        left_text: custom-text
+        custom_left_text: Alarm is disarmed
+```
 
 ## Debugging
 
