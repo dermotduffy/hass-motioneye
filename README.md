@@ -290,6 +290,23 @@ target:
   entity_id: camera.office
 ```
 
+## Media Browsing
+
+Saved motionEye media (movies and images) can be natively browsed from the Home Assistant "Media
+Browser".
+
+<img src="images/screenshot-media-browser.png" alt="hass-motioneye Media Browser screenshot" />
+
+### Manually Configured Root Directories
+
+Whlst this integration allows drilling down into the media for each camera separately,
+underneath motionEye is using the directory structure to associate media items to each
+individual camera. Thus if multiple cameras are manually configured to share the same
+root directory, motionEye will return the _combination_ of the media items when any one
+of the "overlapping" cameras are queried. Use different root directories (in motionEye:
+`File Storage -> Root Directory`) to ensure motionEye (and thus this integration) will
+correctly associate media with the camera from which that media was captured.
+
 ## Debugging
 
 ### Debug Logging
