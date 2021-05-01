@@ -29,6 +29,7 @@ and visualization of multiple types of camera.
    * Custom services to set camera overlay text, to trigger motionEye snapshots, and to perform
      arbitrary configured [motionEye Action
      Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
+   * View saved movies/images straight from the Home Assistant Media Browser.
 
 ## Screenshot
 

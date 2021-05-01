@@ -13,6 +13,7 @@ See [repository](https://github.com/dermotduffy/hass-motioneye) for more informa
    * Control major motionEye camera options as HA switch entities.
    * Camera motion detection events, and file (image or movie) storage events propagate into HA events which can be used in automations.
    * Custom services to set camera overlay text, to trigger motionEye snapshots, and to perform arbitrary configured [motionEye Action Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons).
+   * View saved movies/images straight from the Home Assistant Media Browser.
 
 ## Screenshot
 
