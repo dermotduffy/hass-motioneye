@@ -295,7 +295,7 @@ target:
 Saved motionEye media (movies and images) can be natively browsed from the Home Assistant "Media
 Browser".
 
-<img src="images/screenshot-media-browser.png" alt="hass-motioneye Media Browser screenshot" />
+<img src="images/screenshot-media-browser.png" alt="hass-motioneye Media Browser screenshot" style="border: 1px solid" />
 
 ### Manually Configured Root Directories
 
