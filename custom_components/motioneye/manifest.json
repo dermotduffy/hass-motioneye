@@ -6,7 +6,7 @@
   "config_flow": true,
   "dependencies": ["http", "media_source"],
   "requirements": [
-    "motioneye-client==0.3.4"
+    "motioneye-client==0.3.5"
   ],
   "codeowners": [
     "@dermotduffy"
