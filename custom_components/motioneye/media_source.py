@@ -106,8 +106,6 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
         self, item: MediaSourceItem, media_types: tuple[str] = MEDIA_MIME_TYPES
     ) -> BrowseMediaSource:
         """Return media."""
-        _LOGGER.error(f"async_browse_media: {item} / {media_types}")
-
         if item.identifier:
             config_id, device_id, kind, path = self._parse_identifier(item.identifier)
             config = device = None
@@ -245,8 +243,6 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
         ]
         return base
 
-    # TODO: Make pictures work
-
     async def _build_media_path(
         self,
         config: ConfigEntry,
@@ -255,8 +251,6 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
         path: str | None,
     ) -> BrowseMediaSource:
         """Build the media sources for media kinds."""
-        _LOGGER.error(f"_build_media_path: {config} / {device} / {kind} / {path}")
-
         base = self._build_media_kind(config, device, kind)
 
         # Media paths from motionEye start with a /.
