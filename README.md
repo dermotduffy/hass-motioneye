@@ -376,6 +376,30 @@ will not be necessary anymore and will be retired. You can track the PRs that ar
 of this move from custom to Core in the [Core Integration Project for
 hass-motioneye](https://github.com/dermotduffy/hass-motioneye/projects/3).
 
+## Frequently Asked Questions
+
+### Q: Why do I need to specify both admin and surveillance passwords?
+
+**A**: The administrative password is required for making changes to cameras via the API
+(e.g. for setting camera webhooks, for enabling/disabling text overlay). The
+surveillance password is required to access the live stream (for the Home Assistant
+camera entity) --  the administrative password will not function for this purpose, nor
+is there any way to retrieve credentials using either of the passwords.
+
+### Q: Is it safe to enter my motionEye credentials?
+
+**A**: It is as safe as any other Home Assistant-stored credentials. Passwords are stored using
+the standard Home Assistant "config entry" mechanism. They are never logged, nor sent
+anywhere except (at most) to the motionEye server you configure. Source code for this
+integration, and it's underlying library
+([motioneye-client](https://github.com/dermotduffy/motioneye-client)) is readilky
+available for your review.
+
+Good security practice includes not exposing motionEye (or Home Assistant!) to the
+internet unless carefully protected by external security measures (e.g. firewall, Apache
+Access Controls, VPNs, etc) -- as such, even if your credentials were exposed you should
+make it the case that they are of relatively low value in isolation.
+
 ## Development
 
 ### Updating underlying libraries
