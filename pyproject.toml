@@ -15,7 +15,7 @@ combine_as_imports = true
 default_section = "THIRDPARTY"
 
 [tool.pytest.ini_options]
-addopts = "-qq --timeout=9 --cov-report=term-missing --cov=custom_components.motioneye --cov-fail-under=100"
+addopts = "-qq --timeout=9 --cov-report=html:htmlcov --cov-report=xml:coverage.xml --cov-report=term-missing --cov=custom_components.motioneye --cov-fail-under=100"
 console_output_style = "count"
 testpaths = [
   "tests",
