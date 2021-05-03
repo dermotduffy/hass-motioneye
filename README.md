@@ -388,17 +388,18 @@ is there any way to retrieve credentials using either of the passwords.
 
 ### Q: Is it safe to enter my motionEye credentials?
 
-**A**: It is as safe as any other Home Assistant-stored credentials. Passwords are stored using
-the standard Home Assistant "config entry" mechanism. They are never logged, nor sent
-anywhere except (at most) to the motionEye server you configure. Source code for this
-integration, and it's underlying library
-([motioneye-client](https://github.com/dermotduffy/motioneye-client)) is readilky
+**A**: It is as safe as any other Home Assistant-stored credentials. Passwords
+are stored using the standard Home Assistant "config entry" mechanism. They are
+never logged, nor sent anywhere except (at most) to the motionEye server you
+configure. Source code for this integration, and it's underlying library
+([motioneye-client](https://github.com/dermotduffy/motioneye-client)) is readily
 available for your review.
 
-Good security practice includes not exposing motionEye (or Home Assistant!) to the
-internet unless carefully protected by external security measures (e.g. firewall, Apache
-Access Controls, VPNs, etc) -- as such, even if your credentials were exposed you should
-make it the case that they are of relatively low value in isolation.
+Good security practice includes not exposing motionEye (or Home Assistant!) to
+the internet unless carefully protected by external security measures (e.g.
+firewall, Apache Access Controls, VPNs, etc) -- as such, even if your
+credentials were exposed you should make it the case that they are of relatively
+low value in isolation.
 
 ## Development
 
