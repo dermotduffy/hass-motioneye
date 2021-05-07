@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, cast
+from typing import Any, Dict, cast
 
 from motioneye_client.client import (
     MotionEyeClientConnectionError,
@@ -12,7 +12,6 @@ from motioneye_client.client import (
 import voluptuous as vol
 
 from homeassistant.config_entries import (
-    CONN_CLASS_LOCAL_POLL,
     SOURCE_REAUTH,
     ConfigEntry,
     ConfigFlow,
@@ -21,7 +20,6 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_SOURCE, CONF_URL
 from homeassistant.core import callback
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.typing import ConfigType
 
 from . import create_motioneye_client
 from .const import (
@@ -44,15 +42,14 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
     """Handle a config flow for motionEye."""
 
     VERSION = 1
-    CONNECTION_CLASS = CONN_CLASS_LOCAL_POLL
 
     async def async_step_user(
-        self, user_input: ConfigType | None = None
+        self, user_input: dict[str, Any] | None = None
     ) -> dict[str, Any]:
         """Handle the initial step."""
 
         def _get_form(
-            user_input: ConfigType, errors: dict[str, str] | None = None
+            user_input: dict[str, Any], errors: dict[str, str] | None = None
         ) -> dict[str, Any]:
             """Show the form to the user."""
             return self.async_show_form(  # type: ignore[no-any-return]
@@ -91,7 +88,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
 
         if user_input is None:
             return _get_form(
-                cast(ConfigType, reauth_entry.data) if reauth_entry else {}
+                cast(Dict[str, Any], reauth_entry.data) if reauth_entry else {}
             )
 
         try:
@@ -145,7 +142,7 @@ class MotionEyeConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg, 
 
     async def async_step_reauth(
         self,
-        config_data: ConfigType | None = None,
+        config_data: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Handle a reauthentication flow."""
         return await self.async_step_user(config_data)
