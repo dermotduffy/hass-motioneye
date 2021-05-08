@@ -319,6 +319,53 @@ of the "overlapping" cameras are queried. Use different root directories (in mot
 `File Storage -> Root Directory`) to ensure motionEye (and thus this integration) will
 correctly associate media with the camera from which that media was captured.
 
+## Example Lovelace Card
+
+A lovelace card with icons that will call the `action` service to send action commands to motionEye.
+
+```yaml
+- type: picture-glance
+  title: Living Room
+  camera_image: camera.living_room
+  camera_view: live
+  entities:
+      - entity: camera.living_room
+      - entity: camera.living_room
+        icon: 'mdi:arrow-left'
+        tap_action:
+          action: call-service
+          service: motioneye.action
+          service_data:
+            action: left
+            entity_id: camera.living_room
+      - entity: camera.living_room
+        icon: 'mdi:arrow-right'
+        tap_action:
+          action: call-service
+          service: motioneye.action
+          service_data:
+            action: right
+            entity_id: camera.living_room
+      - entity: camera.living_room
+        icon: 'mdi:arrow-up'
+        tap_action:
+          action: call-service
+          service: motioneye.action
+          service_data:
+            action: up
+            entity_id: camera.living_room
+      - entity: camera.living_room
+        icon: 'mdi:arrow-down'
+        tap_action:
+          action: call-service
+          service: motioneye.action
+          service_data:
+            action: down
+            entity_id: camera.living_room
+```
+
+<img src="images/screenshot-motioneye-lovelace.png" alt="hass-motioneye lovelace card" />
+
 ## Example Automations
 
 ### Set text overlay when alarm is armed
