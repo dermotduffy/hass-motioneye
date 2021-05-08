@@ -18,7 +18,6 @@ The motionEye integration allows you to integrate your
 is an open source web-frontend for the motion daemon, used to centralize the management
 and visualization of multiple types of camera.
 
-
 ## Features
 
    * Dynamic motionEye camera addition/removal.
@@ -38,17 +37,17 @@ and visualization of multiple types of camera.
 ## Installation
 
 > **_NOTE:_**  As this integration is still in the [wait list for HACS default](https://github.com/hacs/default/pull/901) you must first add a custom repository.
- 
+
    * Add the custom repository:
 
 ```
 Home Assistant > HACS > Integrations > [...] > Custom Repositories
 ```
 
-|Key|Value|
-| --------------- | ------------------------------------------------------------------------- |
-|Repository URL|https://github.com/dermotduffy/hass-motioneye|
-|Category|Integration|
+| Key            | Value                                         |
+| -------------- | --------------------------------------------- |
+| Repository URL | https://github.com/dermotduffy/hass-motioneye |
+| Category       | Integration                                   |
 
    * Use [HACS](https://hacs.xyz/) to install to repository:
 ```
@@ -62,13 +61,13 @@ Home Assistant > Configuration > Integrations > Add Integration > motionEye
 
 ### Configuration Variables
 
-|Variable|Description|
-| --------------- | ------------------------------------------------------------------------- |
-|url|The URL of the motionEye server|
-|admin_username|The username of the motionEye administrative account, used for changing camera settings.|
-|admin_password|The password of the motionEye administrative account.|
-|surveillance_username|The username of the motionEye surveillance user, used to authenticate video streams.|
-|surveillance_password|The password of the motionEye surveillance account.|
+| Variable              | Description                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| url                   | The URL of the motionEye server                                                          |
+| admin_username        | The username of the motionEye administrative account, used for changing camera settings. |
+| admin_password        | The password of the motionEye administrative account.                                    |
+| surveillance_username | The username of the motionEye surveillance user, used to authenticate video streams.     |
+| surveillance_password | The password of the motionEye surveillance account.                                      |
 
 <a name="options"></a>
 ## Options
@@ -95,10 +94,10 @@ Home Assistant > Configuration > Integrations > motionEye > Options
 
 ### Entities
 
-| Platform        | Description                                                               |
-| --------------- | ------------------------------------------------------------------------- |
-| `camera`        | An MJPEG camera that shows the motionEye video stream.                     |
-| `switch`        | Switch entities to enable/disable motion detection, text overlay, video streaming, still image capture and movie capture. |
+| Platform | Description                                                                                                               |
+| -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `camera` | An MJPEG camera that shows the motionEye video stream.                                                                    |
+| `switch` | Switch entities to enable/disable motion detection, text overlay, video streaming, still image capture and movie capture. |
 
 Notes:
    * If the video streaming switch is turned off, the camera entity will become unavailable (but the rest of the integration will continue to work).
@@ -255,9 +254,9 @@ Trigger a camera snapshot (e.g. saving an image to disk).
 
 Parameters:
 
-| Parameter       | Description                                                               |
-| --------------- | ------------------------------------------------------------------------- |
-| `entity_id` `device_id` |An entity id or device id to set the text overlay on.|
+| Parameter               | Description                                           |
+| ----------------------- | ----------------------------------------------------- |
+| `entity_id` `device_id` | An entity id or device id to set the text overlay on. |
 
 Note: This is a thin wrapper on the [`motioneye.action` call](#action).
 
@@ -266,10 +265,10 @@ Note: This is a thin wrapper on the [`motioneye.action` call](#action).
 
 Trigger a motionEye action (see [MotionEye Action Buttons](https://github.com/ccrisan/motioneye/wiki/Action-Buttons)).
 
-| Parameter       | Description                                                               |
-| --------------- | ------------------------------------------------------------------------- |
-| `entity_id` `device_id`|An entity id or device id to set the text overlay on.|
-| `action`|A string representing the motionEye action to trigger. One of `snapshot`, `record_start`, `record_stop`, `lock`, `unlock`, `light_on`, `light_off`, `alarm_on`, `alarm_off`, `up`, `right`, `down`, `left`, `zoom_in`, `zoom_out`, `preset1`-`preset9`|
+| Parameter               | Description                                                                                                                                                                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `entity_id` `device_id` | An entity id or device id to set the text overlay on.                                                                                                                                                                                                  |
+| `action`                | A string representing the motionEye action to trigger. One of `snapshot`, `record_start`, `record_stop`, `lock`, `unlock`, `light_on`, `light_off`, `alarm_on`, `alarm_off`, `up`, `right`, `down`, `left`, `zoom_in`, `zoom_out`, `preset1`-`preset9` |
 
 Note: As of 2021-04-11 the `record_start` and `record_stop` action are not implemented in
 motionEye itself and thus do not function in this integration ([relevant code](https://github.com/ccrisan/motioneye/blob/dev/motioneye/handlers.py#L1741)).
@@ -280,11 +279,11 @@ Set the text overlay for a camera.
 
 Parameters:
 
-| Parameter       | Description                                                               |
-| --------------- | ------------------------------------------------------------------------- |
-| `entity_id` `device_id` |An entity id or device id to set the text overlay on.|
-| `left_text` `right_text`| One of `timestamp`, `camera-name`, `custom-text` or `disabled` to show a timestamp, the  name of the camera, custom text or nothing at all, on the left or right-hand side.|
-| `custom_left_text` `custom_right_text`| Custom text to show on the left or right, if the `custom-text` value is selected.|
+| Parameter                              | Description                                                                                                                                                                 |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id` `device_id`                | An entity id or device id to set the text overlay on.                                                                                                                       |
+| `left_text` `right_text`               | One of `timestamp`, `camera-name`, `custom-text` or `disabled` to show a timestamp, the  name of the camera, custom text or nothing at all, on the left or right-hand side. |
+| `custom_left_text` `custom_right_text` | Custom text to show on the left or right, if the `custom-text` value is selected.                                                                                           |
 
 Note:
    * Calling this service triggers a reset of the motionEye cameras which will pause the
