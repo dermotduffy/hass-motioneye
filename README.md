@@ -37,6 +37,19 @@ and visualization of multiple types of camera.
 
 ## Installation
 
+> **_NOTE:_**  As this integration is still in the [wait list for HACS default](https://github.com/hacs/default/pull/901) you must first add a custom repository.
+ 
+   * Add the custom repository:
+
+```
+Home Assistant > HACS > Integrations -> [...] -> Custom Repositories
+```
+
+|Key|Value|
+| --------------- | ------------------------------------------------------------------------- |
+|Repository URL|https://github.com/dermotduffy/hass-motioneye|
+|Category|Integration|
+
    * Use [HACS](https://hacs.xyz/) to install to repository:
 ```
 Home Assistant > HACS > Integrations > "Explore & Add Integrations" > motionEye
