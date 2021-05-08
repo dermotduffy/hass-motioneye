@@ -42,7 +42,7 @@ and visualization of multiple types of camera.
    * Add the custom repository:
 
 ```
-Home Assistant > HACS > Integrations -> [...] -> Custom Repositories
+Home Assistant > HACS > Integrations > [...] > Custom Repositories
 ```
 
 |Key|Value|
@@ -57,7 +57,7 @@ Home Assistant > HACS > Integrations > "Explore & Add Integrations" > motionEye
    * Restart Home Assistant.
    * Then install the integration:
 ```
-Home Assistant > Configuration > Integrations > Add Integration -> motionEye
+Home Assistant > Configuration > Integrations > Add Integration > motionEye
 ```
 
 ### Configuration Variables
