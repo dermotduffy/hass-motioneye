@@ -97,8 +97,9 @@ SERVICE_SNAPSHOT = "snapshot"
 SIGNAL_CAMERA_ADD = f"{DOMAIN}_camera_add_signal." "{}"
 SIGNAL_CAMERA_REMOVE = f"{DOMAIN}_camera_remove_signal." "{}"
 
-TYPE_MOTIONEYE_MJPEG_CAMERA = "motioneye_mjpeg_camera"
-TYPE_MOTIONEYE_SWITCH_BASE = "motioneye_switch"
+TYPE_MOTIONEYE_MJPEG_CAMERA = f"{DOMAIN}_mjpeg_camera"
+TYPE_MOTIONEYE_SWITCH_BASE = f"{DOMAIN}_switch"
+TYPE_MOTIONEYE_ACTION_SENSOR = f"{DOMAIN}_action_sensor"
 
 WEB_HOOK_SENTINEL_KEY = "src"
 WEB_HOOK_SENTINEL_VALUE = "hass-motioneye"

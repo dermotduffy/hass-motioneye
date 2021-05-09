@@ -7,10 +7,12 @@ from unittest.mock import AsyncMock, Mock, patch
 from motioneye_client.const import DEFAULT_PORT
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.motioneye import get_motioneye_entity_unique_id
 from custom_components.motioneye.const import DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_URL
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 
 TEST_CONFIG_ENTRY_ID = "74565ad414754616000674c87bdc876c"
 TEST_URL = f"http://test:{DEFAULT_PORT+1}"
@@ -21,7 +23,7 @@ TEST_CAMERA_DEVICE_IDENTIFIER = (DOMAIN, f"{TEST_CONFIG_ENTRY_ID}_{TEST_CAMERA_I
 TEST_CAMERA = {
     "show_frame_changes": False,
     "framerate": 25,
-    "actions": [],
+    "actions": ["one", "two", "three"],
     "preserve_movies": 0,
     "auto_threshold_tuning": True,
     "recording_mode": "motion-triggered",
@@ -131,6 +133,7 @@ TEST_CAMERA = {
 }
 TEST_CAMERAS = {"cameras": [TEST_CAMERA]}
 TEST_SURVEILLANCE_USERNAME = "surveillance_username"
+TEST_SENSOR_ACTION_ENTITY_ID = "sensor.test_camera_actions"
 TEST_SWITCH_ENTITY_ID_BASE = "switch.test_camera"
 TEST_SWITCH_MOTION_DETECTION_ENTITY_ID = (
     f"{TEST_SWITCH_ENTITY_ID_BASE}_motion_detection"
@@ -181,3 +184,23 @@ async def setup_mock_motioneye_config_entry(
         await hass.config_entries.async_setup(config_entry.entry_id)
         await hass.async_block_till_done()
     return config_entry
+
+
+def register_test_entity(
+    hass: HomeAssistant, platform: str, camera_id: int, type_name: str, entity_id: str
+) -> None:
+    """Register a test entity."""
+
+    unique_id = get_motioneye_entity_unique_id(
+        TEST_CONFIG_ENTRY_ID, camera_id, type_name
+    )
+    entity_id = entity_id.split(".")[1]
+
+    entity_registry = er.async_get(hass)
+    entity_registry.async_get_or_create(
+        platform,
+        DOMAIN,
+        unique_id,
+        suggested_object_id=entity_id,
+        disabled_by=None,
+    )
