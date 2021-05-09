@@ -5,22 +5,14 @@ import logging
 from typing import Any, Callable
 
 from motioneye_client.client import MotionEyeClient
-from motioneye_client.const import KEY_ACTIONS, KEY_ID, KEY_NAME
+from motioneye_client.const import KEY_ACTIONS, KEY_NAME
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import (
-    get_camera_from_cameras,
-    get_motioneye_device_identifier,
-    get_motioneye_entity_unique_id,
-    listen_for_new_cameras,
-)
+from . import MotionEyeEntity, listen_for_new_cameras
 from .const import CONF_CLIENT, CONF_COORDINATOR, DOMAIN, TYPE_MOTIONEYE_ACTION_SENSOR
 
 _LOGGER = logging.getLogger(__name__)
@@ -51,7 +43,7 @@ async def async_setup_entry(
     listen_for_new_cameras(hass, entry, camera_add)
 
 
-class MotionEyeActionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[misc]
+class MotionEyeActionSensor(MotionEyeEntity, SensorEntity):  # type: ignore[misc]
     """motionEye action sensor camera."""
 
     def __init__(
@@ -62,21 +54,14 @@ class MotionEyeActionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[mi
         coordinator: DataUpdateCoordinator,
     ) -> None:
         """Initialize an action sensor."""
-        self._camera_id = camera[KEY_ID]
-        self._device_identifier = get_motioneye_device_identifier(
-            config_entry_id, self._camera_id
+        MotionEyeEntity.__init__(
+            self,
+            config_entry_id,
+            TYPE_MOTIONEYE_ACTION_SENSOR,
+            camera,
+            client,
+            coordinator,
         )
-        self._unique_id = get_motioneye_entity_unique_id(
-            config_entry_id, self._camera_id, TYPE_MOTIONEYE_ACTION_SENSOR
-        )
-        self._client = client
-        self._camera: dict[str, Any] | None = camera
-        super().__init__(coordinator)
-
-    @property
-    def unique_id(self) -> str:
-        """Return the unique id."""
-        return self._unique_id
 
     @property
     def name(self) -> str:
@@ -93,17 +78,6 @@ class MotionEyeActionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[mi
     def extra_state_attributes(self) -> dict[str, Any]:
         """Add actions as attribute."""
         return {KEY_ACTIONS: self._camera.get(KEY_ACTIONS, []) if self._camera else []}
-
-    @property
-    def device_info(self) -> dict[str, Any]:
-        """Return the device information."""
-        return {"identifiers": {self._device_identifier}}
-
-    @callback  # type: ignore[misc]
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        self._camera = get_camera_from_cameras(self._camera_id, self.coordinator.data)
-        super()._handle_coordinator_update()
 
     @property
     def entity_registry_enabled_default(self) -> bool:

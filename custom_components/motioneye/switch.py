@@ -5,7 +5,6 @@ from typing import Any, Callable
 
 from motioneye_client.client import MotionEyeClient
 from motioneye_client.const import (
-    KEY_ID,
     KEY_MOTION_DETECTION,
     KEY_MOVIES,
     KEY_NAME,
@@ -18,18 +17,10 @@ from motioneye_client.const import (
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
-from . import (
-    get_camera_from_cameras,
-    get_motioneye_device_identifier,
-    get_motioneye_entity_unique_id,
-    listen_for_new_cameras,
-)
+from . import MotionEyeEntity, get_camera_from_cameras, listen_for_new_cameras
 from .const import CONF_CLIENT, CONF_COORDINATOR, DOMAIN, TYPE_MOTIONEYE_SWITCH_BASE
 
 MOTIONEYE_SWITCHES = [
@@ -68,7 +59,7 @@ async def async_setup_entry(
     return True
 
 
-class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
+class MotionEyeSwitch(MotionEyeEntity, SwitchEntity):  # type: ignore[misc]
     """MotionEyeSwitch switch class."""
 
     def __init__(
@@ -84,23 +75,15 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
         self._switch_key_friendly_name = " ".join(
             [w.capitalize() for w in self._switch_key.split("_")]
         )
-        self._client = client
-        self._camera_id = camera[KEY_ID]
-        self._device_identifier = get_motioneye_device_identifier(
-            config_entry_id, self._camera_id
-        )
-        self._unique_id = get_motioneye_entity_unique_id(
-            config_entry_id,
-            self._camera_id,
-            slugify(f"{TYPE_MOTIONEYE_SWITCH_BASE} {switch_key}"),
-        )
-        self._camera = get_camera_from_cameras(self._camera_id, coordinator.data)
-        super().__init__(coordinator)
 
-    @property
-    def unique_id(self) -> str:
-        """Return a unique id for this instance."""
-        return self._unique_id
+        MotionEyeEntity.__init__(
+            self,
+            config_entry_id,
+            slugify(f"{TYPE_MOTIONEYE_SWITCH_BASE} {switch_key}"),
+            camera,
+            client,
+            coordinator,
+        )
 
     @property
     def name(self) -> str:
@@ -131,11 +114,6 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the switch."""
         await self._async_send_set_camera(False)
-
-    @property
-    def device_info(self) -> dict[str, Any] | None:
-        """Return the device information."""
-        return {"identifiers": {self._device_identifier}}
 
     @callback  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:
