@@ -183,7 +183,7 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
             self._motion_detection_enabled = self._camera.get(
                 KEY_MOTION_DETECTION, False
             )
-        self.async_write_ha_state()
+            self.async_write_ha_state()
 
     @property
     def brand(self) -> str:
