@@ -141,4 +141,4 @@ class MotionEyeSwitch(SwitchEntity, CoordinatorEntity):  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         self._camera = get_camera_from_cameras(self._camera_id, self.coordinator.data)
-        CoordinatorEntity._handle_coordinator_update(self)
+        super()._handle_coordinator_update()

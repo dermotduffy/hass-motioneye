@@ -297,14 +297,16 @@ async def test_state_attributes(hass: HomeAssistant) -> None:
 
 async def test_device_info(hass: HomeAssistant) -> None:
     """Verify device information includes expected details."""
-    client = create_mock_motioneye_client()
-    entry = await setup_mock_motioneye_config_entry(hass, client=client)
+    entry = await setup_mock_motioneye_config_entry(hass)
 
     device_identifier = get_motioneye_device_identifier(entry.entry_id, TEST_CAMERA_ID)
     device_registry = dr.async_get(hass)
 
     device = device_registry.async_get_device({device_identifier})
     assert device
+
+    # Test device details here (not tested for other platforms as the are set
+    # centrally).
     assert device.config_entries == {TEST_CONFIG_ENTRY_ID}
     assert device.identifiers == {device_identifier}
     assert device.manufacturer == MOTIONEYE_MANUFACTURER

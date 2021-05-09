@@ -94,10 +94,11 @@ Home Assistant > Configuration > Integrations > motionEye > Options
 
 ### Entities
 
-| Platform | Description                                                                                                               |
-| -------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `camera` | An MJPEG camera that shows the motionEye video stream.                                                                    |
-| `switch` | Switch entities to enable/disable motion detection, text overlay, video streaming, still image capture and movie capture. |
+| Platform | Description                                                                                                                                                                                                                                   |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `camera` | An MJPEG camera that shows the motionEye video stream.                                                                                                                                                                                        |
+| `switch` | Switch entities to enable/disable motion detection, text overlay, video streaming, still image capture and movie capture.                                                                                                                     |
+| `sensor` | An "action sensor" that shows the number of configured [actions](https://github.com/ccrisan/motioneye/wiki/Action-Buttons) for this device. The names of the available actions are viewable in the `actions`  attribute of the sensor entity. |
 
 Notes:
    * If the video streaming switch is turned off, the camera entity will become unavailable (but the rest of the integration will continue to work).

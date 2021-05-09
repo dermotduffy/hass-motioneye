@@ -13,10 +13,7 @@ from motioneye_client.const import (
 from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.motioneye import get_motioneye_device_identifier
-from custom_components.motioneye.const import (
-    DEFAULT_SCAN_INTERVAL,
-    MOTIONEYE_MANUFACTURER,
-)
+from custom_components.motioneye.const import DEFAULT_SCAN_INTERVAL
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
 from homeassistant.const import ATTR_ENTITY_ID, SERVICE_TURN_OFF, SERVICE_TURN_ON
 from homeassistant.core import HomeAssistant
@@ -26,8 +23,6 @@ import homeassistant.util.dt as dt_util
 from . import (
     TEST_CAMERA,
     TEST_CAMERA_ID,
-    TEST_CAMERA_NAME,
-    TEST_CONFIG_ENTRY_ID,
     TEST_SWITCH_ENTITY_ID_BASE,
     TEST_SWITCH_MOTION_DETECTION_ENTITY_ID,
     create_mock_motioneye_client,
@@ -117,8 +112,7 @@ async def test_switch_has_correct_entities(hass: HomeAssistant) -> None:
 
 async def test_switch_device_info(hass: HomeAssistant) -> None:
     """Verify device information includes expected details."""
-    client = create_mock_motioneye_client()
-    config_entry = await setup_mock_motioneye_config_entry(hass, client=client)
+    config_entry = await setup_mock_motioneye_config_entry(hass)
 
     device_identifer = get_motioneye_device_identifier(
         config_entry.entry_id, TEST_CAMERA_ID
@@ -127,11 +121,6 @@ async def test_switch_device_info(hass: HomeAssistant) -> None:
 
     device = device_registry.async_get_device({device_identifer})
     assert device
-    assert device.config_entries == {TEST_CONFIG_ENTRY_ID}
-    assert device.identifiers == {device_identifer}
-    assert device.manufacturer == MOTIONEYE_MANUFACTURER
-    assert device.model == MOTIONEYE_MANUFACTURER
-    assert device.name == TEST_CAMERA_NAME
 
     entity_registry = await er.async_get_registry(hass)
     entities_from_device = [
