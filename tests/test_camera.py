@@ -305,7 +305,8 @@ async def test_device_info(hass: HomeAssistant) -> None:
     device = device_registry.async_get_device({device_identifier})
     assert device
 
-    # Test device details here (not tested for other platforms).
+    # Test device details here (not tested for other platforms as the are set
+    # centrally).
     assert device.config_entries == {TEST_CONFIG_ENTRY_ID}
     assert device.identifiers == {device_identifier}
     assert device.manufacturer == MOTIONEYE_MANUFACTURER
