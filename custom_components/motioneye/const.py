@@ -100,6 +100,8 @@ SIGNAL_CAMERA_REMOVE = f"{DOMAIN}_camera_remove_signal." "{}"
 TYPE_MOTIONEYE_MJPEG_CAMERA = f"{DOMAIN}_mjpeg_camera"
 TYPE_MOTIONEYE_SWITCH_BASE = f"{DOMAIN}_switch"
 TYPE_MOTIONEYE_ACTION_SENSOR = f"{DOMAIN}_action_sensor"
+TYPE_MOTIONEYE_MOTION_DETECTED_BINARY_SENSOR = f"{DOMAIN}_motion_detected_binary_sensor"
+TYPE_MOTIONEYE_FILE_STORED_BINARY_SENSOR = f"{DOMAIN}_file_stored_binary_sensor"
 
 WEB_HOOK_SENTINEL_KEY = "src"
 WEB_HOOK_SENTINEL_VALUE = "hass-motioneye"

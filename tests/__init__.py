@@ -14,6 +14,10 @@ from homeassistant.const import CONF_URL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 
+TEST_BINARY_SENSOR_MOTION_DETECTED_ENTITY_ID = (
+    "binary_sensor.test_camera_motion_detected"
+)
+TEST_BINARY_SENSOR_FILE_STORED_ENTITY_ID = "binary_sensor.test_camera_file_stored"
 TEST_CONFIG_ENTRY_ID = "74565ad414754616000674c87bdc876c"
 TEST_URL = f"http://test:{DEFAULT_PORT+1}"
 TEST_CAMERA_ID = 100
