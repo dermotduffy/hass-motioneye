@@ -90,6 +90,11 @@ class MotionEyeActionSensor(CoordinatorEntity, SensorEntity):  # type: ignore[mi
         return len(self._camera.get(KEY_ACTIONS, [])) if self._camera else 0
 
     @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Add actions as attribute."""
+        return {KEY_ACTIONS: self._camera.get(KEY_ACTIONS, []) if self._camera else []}
+
+    @property
     def device_info(self) -> dict[str, Any]:
         """Return the device information."""
         return {"identifiers": {self._device_identifier}}

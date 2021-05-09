@@ -43,6 +43,7 @@ async def test_sensor_actions(hass: HomeAssistant) -> None:
     entity_state = hass.states.get(TEST_SENSOR_ACTION_ENTITY_ID)
     assert entity_state
     assert entity_state.state == "3"
+    assert entity_state.attributes.get(KEY_ACTIONS) == ["one", "two", "three"]
 
     updated_camera = copy.deepcopy(TEST_CAMERA)
     updated_camera[KEY_ACTIONS] = ["one"]
@@ -55,6 +56,7 @@ async def test_sensor_actions(hass: HomeAssistant) -> None:
     entity_state = hass.states.get(TEST_SENSOR_ACTION_ENTITY_ID)
     assert entity_state
     assert entity_state.state == "1"
+    assert entity_state.attributes.get(KEY_ACTIONS) == ["one"]
 
     del updated_camera[KEY_ACTIONS]
     async_fire_time_changed(hass, dt_util.utcnow() + DEFAULT_SCAN_INTERVAL)
@@ -63,6 +65,7 @@ async def test_sensor_actions(hass: HomeAssistant) -> None:
     entity_state = hass.states.get(TEST_SENSOR_ACTION_ENTITY_ID)
     assert entity_state
     assert entity_state.state == "0"
+    assert entity_state.attributes.get(KEY_ACTIONS) == []
 
 
 async def test_sensor_device_info(hass: HomeAssistant) -> None:
