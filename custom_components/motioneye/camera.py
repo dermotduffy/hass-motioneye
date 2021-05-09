@@ -32,12 +32,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from . import (
-    MotionEyeEntity,
-    get_camera_from_cameras,
-    is_acceptable_camera,
-    listen_for_new_cameras,
-)
+from . import MotionEyeEntity, is_acceptable_camera, listen_for_new_cameras
 from .const import (
     CONF_CLIENT,
     CONF_COORDINATOR,
@@ -99,7 +94,6 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
         self._surveillance_username = username
         self._surveillance_password = password
         self._motion_detection_enabled: bool = camera.get(KEY_MOTION_DETECTION, False)
-        self._available = self._is_acceptable_streaming_camera(camera)
 
         # motionEye cameras are always streaming or unavailable.
         self.is_streaming = True
@@ -117,7 +111,7 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
             self,
             {
                 CONF_VERIFY_SSL: False,
-                **self._get_mjpeg_camera_properties_for_camera(camera),
+                **self._get_mjpeg_camera_properties_for_camera(self._camera),
             },
         )
 
@@ -169,30 +163,26 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
         if self._authentication == HTTP_BASIC_AUTHENTICATION:
             self._auth = aiohttp.BasicAuth(self._username, password=self._password)
 
-    @classmethod
-    def _is_acceptable_streaming_camera(cls, camera: dict[str, Any] | None) -> bool:
+    def _is_acceptable_streaming_camera(self) -> bool:
         """Determine if a camera is streaming/usable."""
-        return is_acceptable_camera(camera) and MotionEyeClient.is_camera_streaming(
-            camera
-        )
+        return is_acceptable_camera(
+            self._camera
+        ) and MotionEyeClient.is_camera_streaming(self._camera)
 
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self._available
+        return super().available and self._is_acceptable_streaming_camera()
 
     @callback  # type: ignore[misc]
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        available = False
-        if self.coordinator.last_update_success and self.coordinator.data is not None:
-            camera = get_camera_from_cameras(self._camera_id, self.coordinator.data)
-            if self._is_acceptable_streaming_camera(camera):
-                assert camera
-                self._set_mjpeg_camera_state_for_camera(camera)
-                self._motion_detection_enabled = camera.get(KEY_MOTION_DETECTION, False)
-                available = True
-        self._available = available
+        super()._handle_coordinator_update()
+        if self._camera and self._is_acceptable_streaming_camera():
+            self._set_mjpeg_camera_state_for_camera(self._camera)
+            self._motion_detection_enabled = self._camera.get(
+                KEY_MOTION_DETECTION, False
+            )
         self.async_write_ha_state()
 
     @property
