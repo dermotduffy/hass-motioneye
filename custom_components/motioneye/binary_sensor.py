@@ -8,7 +8,10 @@ from typing import Any, Callable
 from motioneye_client.client import MotionEyeClient
 from motioneye_client.const import KEY_NAME
 
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.components.binary_sensor import (
+    DEVICE_CLASS_MOTION,
+    BinarySensorEntity,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICE_ID
 from homeassistant.core import HomeAssistant, callback
@@ -155,8 +158,13 @@ class MotionEyeMotionDetectedBinarySensor(MotionEyeEventBinarySensor):
             coordinator,
             options,
             EVENT_MOTION_DETECTED,
-            "Motion Detected",
+            "Motion",
         )
+
+    @property
+    def device_class(self) -> str:
+        """Return the class of this device."""
+        return str(DEVICE_CLASS_MOTION)
 
 
 class MotionEyeFileStoredBinarySensor(MotionEyeEventBinarySensor):
