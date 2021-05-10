@@ -94,11 +94,12 @@ Home Assistant > Configuration > Integrations > motionEye > Options
 
 ### Entities
 
-| Platform | Description                                                                                                                                                                                                                                   |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `camera` | An MJPEG camera that shows the motionEye video stream.                                                                                                                                                                                        |
-| `switch` | Switch entities to enable/disable motion detection, text overlay, video streaming, still image capture and movie capture.                                                                                                                     |
-| `sensor` | An "action sensor" that shows the number of configured [actions](https://github.com/ccrisan/motioneye/wiki/Action-Buttons) for this device. The names of the available actions are viewable in the `actions`  attribute of the sensor entity. |
+| Platform        | Description                                                                                                                                                                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `camera`        | An MJPEG camera that shows the motionEye video stream.                                                                                                                                                                                        |
+| `switch`        | Switch entities to enable/disable motion detection, text overlay, video streaming, still image capture and movie capture.                                                                                                                     |
+| `sensor`        | An "action sensor" that shows the number of configured [actions](https://github.com/ccrisan/motioneye/wiki/Action-Buttons) for this device. The names of the available actions are viewable in the `actions`  attribute of the sensor entity. |
+| `binary_sensor` | A "motion" and "file_stored" binary sensor convenience entity. See [below](#convenience-binary-sensors).                                                                                                                                      |
 
 Notes:
    * If the video streaming switch is turned off, the camera entity will become unavailable (but the rest of the integration will continue to work).
@@ -153,7 +154,6 @@ Use the camera id in the stream URL:
 ```
 http://motioneye/video/{{ id }}
 ```
-
 
 ### Events
 
@@ -232,6 +232,14 @@ web hook, remove the `src=hass-motioneye` parameter or the web hook will be over
     }
 }
 ```
+
+<a name="convenience-binary-sensors"></a>
+#### Convenience binary sensor entities
+
+For convenience (e.g. UI display, entity state recording) binary sensor entities
+(`binary_sensor.<name>_motion` and `binary_sensor.<name>_file_stored`) are
+included to provide the equivalent on/off signal in entity form. The state of
+the binary sensors resets after 30 seconds.
 
 ### Services
 
