@@ -13,7 +13,7 @@ from custom_components.motioneye.const import (
     DOMAIN,
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
-    TYPE_MOTIONEYE_MOTION_DETECTED_BINARY_SENSOR,
+    TYPE_MOTIONEYE_MOTION_BINARY_SENSOR,
 )
 from homeassistant.components.binary_sensor import (
     DEVICE_CLASS_MOTION,
@@ -53,7 +53,7 @@ async def test_binary_sensor_events(hass: HomeAssistant) -> None:
         hass,
         BINARY_SENSOR_DOMAIN,
         TEST_CAMERA_ID,
-        TYPE_MOTIONEYE_MOTION_DETECTED_BINARY_SENSOR,
+        TYPE_MOTIONEYE_MOTION_BINARY_SENSOR,
         TEST_BINARY_SENSOR_MOTION_ENTITY_ID,
     )
 

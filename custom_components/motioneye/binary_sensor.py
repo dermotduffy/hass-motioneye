@@ -27,7 +27,7 @@ from .const import (
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
     TYPE_MOTIONEYE_FILE_STORED_BINARY_SENSOR,
-    TYPE_MOTIONEYE_MOTION_DETECTED_BINARY_SENSOR,
+    TYPE_MOTIONEYE_MOTION_BINARY_SENSOR,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ async def async_setup_entry(
         ]
         async_add_entities(
             [
-                MotionEyeMotionDetectedBinarySensor(*args),
+                MotionEyeMotionBinarySensor(*args),
                 MotionEyeFileStoredBinarySensor(*args),
             ]
         )
@@ -138,7 +138,7 @@ class MotionEyeEventBinarySensor(MotionEyeEntity, BinarySensorEntity):  # type: 
         await super().async_added_to_hass()
 
 
-class MotionEyeMotionDetectedBinarySensor(MotionEyeEventBinarySensor):
+class MotionEyeMotionBinarySensor(MotionEyeEventBinarySensor):
     """Binary sensor to show motion detected."""
 
     def __init__(
@@ -152,7 +152,7 @@ class MotionEyeMotionDetectedBinarySensor(MotionEyeEventBinarySensor):
         """Initialize the binary sensor."""
         super().__init__(
             config_entry_id,
-            TYPE_MOTIONEYE_MOTION_DETECTED_BINARY_SENSOR,
+            TYPE_MOTIONEYE_MOTION_BINARY_SENSOR,
             camera,
             client,
             coordinator,
