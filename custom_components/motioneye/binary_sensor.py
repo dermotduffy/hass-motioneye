@@ -32,8 +32,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = ["camera"]
-
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: Callable
@@ -164,7 +162,7 @@ class MotionEyeMotionBinarySensor(MotionEyeEventBinarySensor):
     @property
     def device_class(self) -> str:
         """Return the class of this device."""
-        return str(DEVICE_CLASS_MOTION)
+        return DEVICE_CLASS_MOTION  # type: ignore[no-any-return]
 
 
 class MotionEyeFileStoredBinarySensor(MotionEyeEventBinarySensor):
