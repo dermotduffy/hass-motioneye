@@ -108,9 +108,11 @@ class MotionEyeEventBinarySensor(MotionEyeEntity, BinarySensorEntity):  # type: 
 
         device_registry = dr.async_get(self.hass)
 
+        @callback  # type: ignore[misc]
         def handle_event(event: Event) -> None:
             """Handle an event."""
 
+            @callback  # type: ignore[misc]
             def turn_off(_: datetime.datetime) -> None:
                 """Turn the state off."""
                 self._state = False
@@ -129,7 +131,7 @@ class MotionEyeEventBinarySensor(MotionEyeEntity, BinarySensorEntity):  # type: 
                     self._state = True
                     self.async_write_ha_state()
 
-        self.hass.bus.async_listen(self._event, handle_event)
+        self.hass.bus.async_listen(f"{DOMAIN}.{self._event}", handle_event)
         await super().async_added_to_hass()
 
 

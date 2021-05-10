@@ -10,6 +10,7 @@ from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.motioneye import get_motioneye_device_identifier
 from custom_components.motioneye.const import (
+    DOMAIN,
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
     TYPE_MOTIONEYE_MOTION_DETECTED_BINARY_SENSOR,
@@ -39,10 +40,10 @@ async def test_binary_sensor_events(hass: HomeAssistant) -> None:
     ) -> None:
         """Fire an event."""
         with patch("homeassistant.helpers.event.dt_util.utcnow", return_value=now):
-            if device_id:
-                hass.bus.async_fire(event_type, {CONF_DEVICE_ID: device_id})
-            else:
-                hass.bus.async_fire(event_type)
+            hass.bus.async_fire(
+                f"{DOMAIN}.{event_type}",
+                {CONF_DEVICE_ID: device_id} if device_id else {},
+            )
             await hass.async_block_till_done()
 
     register_test_entity(
