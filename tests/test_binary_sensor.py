@@ -10,6 +10,7 @@ from pytest_homeassistant_custom_component.common import async_fire_time_changed
 
 from custom_components.motioneye import get_motioneye_device_identifier
 from custom_components.motioneye.const import (
+    CONF_EVENT_DURATION,
     DOMAIN,
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
@@ -28,6 +29,7 @@ from . import (
     TEST_BINARY_SENSOR_FILE_STORED_ENTITY_ID,
     TEST_BINARY_SENSOR_MOTION_ENTITY_ID,
     TEST_CAMERA_ID,
+    create_mock_motioneye_client,
     register_test_entity,
     setup_mock_motioneye_config_entry,
 )
@@ -58,7 +60,8 @@ async def test_binary_sensor_events(hass: HomeAssistant) -> None:
     )
 
     device_registry = dr.async_get(hass)
-    config_entry = await setup_mock_motioneye_config_entry(hass)
+    client = create_mock_motioneye_client()
+    config_entry = await setup_mock_motioneye_config_entry(hass, client=client)
     device_identifer = get_motioneye_device_identifier(
         config_entry.entry_id, TEST_CAMERA_ID
     )
@@ -147,6 +150,25 @@ async def test_binary_sensor_events(hass: HomeAssistant) -> None:
     entity_state = hass.states.get(TEST_BINARY_SENSOR_FILE_STORED_ENTITY_ID)
     assert entity_state
     assert entity_state.state == "off"
+
+    # Reload with a larger event duration.
+    with patch(
+        "custom_components.motioneye.MotionEyeClient",
+        return_value=client,
+    ):
+        hass.config_entries.async_update_entry(
+            config_entry, options={CONF_EVENT_DURATION: 600}
+        )
+        await hass.async_block_till_done()
+
+    await fire_event(now, EVENT_MOTION_DETECTED, device.id)
+    now += timedelta(seconds=32)
+    async_fire_time_changed(hass, now)
+    await hass.async_block_till_done()
+
+    entity_state = hass.states.get(TEST_BINARY_SENSOR_MOTION_ENTITY_ID)
+    assert entity_state
+    assert entity_state.state == "on"
 
 
 async def test_binary_sensor_device_info(hass: HomeAssistant) -> None:

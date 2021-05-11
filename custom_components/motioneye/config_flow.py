@@ -25,11 +25,13 @@ from . import create_motioneye_client
 from .const import (
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
+    CONF_EVENT_DURATION,
     CONF_STREAM_URL_TEMPLATE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
     CONF_WEBHOOK_SET,
     CONF_WEBHOOK_SET_OVERWRITE,
+    DEFAULT_EVENT_DURATION,
     DEFAULT_WEBHOOK_SET,
     DEFAULT_WEBHOOK_SET_OVERWRITE,
     DOMAIN,
@@ -188,14 +190,23 @@ class MotionEyeOptionsFlow(OptionsFlow):  # type: ignore[misc]
         if self.show_advanced_options:
             # The input URL is not validated as being a URL, to allow for the possibility
             # the template input won't be a valid URL until after it's rendered.
-            schema[
-                vol.Required(
-                    CONF_STREAM_URL_TEMPLATE,
-                    default=self._config_entry.options.get(
+            schema.update(
+                {
+                    vol.Required(
                         CONF_STREAM_URL_TEMPLATE,
-                        "",
-                    ),
-                )
-            ] = str
+                        default=self._config_entry.options.get(
+                            CONF_STREAM_URL_TEMPLATE,
+                            "",
+                        ),
+                    ): str,
+                    vol.Required(
+                        CONF_EVENT_DURATION,
+                        default=self._config_entry.options.get(
+                            CONF_EVENT_DURATION,
+                            DEFAULT_EVENT_DURATION,
+                        ),
+                    ): int,
+                }
+            )
 
         return self.async_show_form(step_id="init", data_schema=vol.Schema(schema))  # type: ignore[no-any-return]

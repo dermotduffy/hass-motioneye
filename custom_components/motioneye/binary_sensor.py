@@ -23,6 +23,8 @@ from . import MotionEyeEntity, listen_for_new_cameras
 from .const import (
     CONF_CLIENT,
     CONF_COORDINATOR,
+    CONF_EVENT_DURATION,
+    DEFAULT_EVENT_DURATION,
     DOMAIN,
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
@@ -126,7 +128,7 @@ class MotionEyeEventBinarySensor(MotionEyeEntity, BinarySensorEntity):  # type: 
                     self._cancel_timer()
                     self._timer_unsub = async_call_later(
                         self.hass,
-                        30,
+                        self._options.get(CONF_EVENT_DURATION, DEFAULT_EVENT_DURATION),
                         turn_off,
                     )
                     self._state = True
