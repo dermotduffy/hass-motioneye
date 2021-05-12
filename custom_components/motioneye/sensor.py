@@ -36,6 +36,7 @@ async def async_setup_entry(
                     camera,
                     entry_data[CONF_CLIENT],
                     entry_data[CONF_COORDINATOR],
+                    entry.options,
                 )
             ]
         )
@@ -52,6 +53,7 @@ class MotionEyeActionSensor(MotionEyeEntity, SensorEntity):  # type: ignore[misc
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
+        options: dict[str, Any],
     ) -> None:
         """Initialize an action sensor."""
         MotionEyeEntity.__init__(
@@ -61,6 +63,7 @@ class MotionEyeActionSensor(MotionEyeEntity, SensorEntity):  # type: ignore[misc
             camera,
             client,
             coordinator,
+            options,
         )
 
     @property

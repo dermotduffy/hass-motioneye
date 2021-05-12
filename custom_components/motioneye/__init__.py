@@ -37,6 +37,7 @@ from motioneye_client.const import (
 from multidict import MultiDictProxy
 import voluptuous as vol
 
+from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
@@ -101,7 +102,7 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS = [CAMERA_DOMAIN, SENSOR_DOMAIN, SWITCH_DOMAIN]
+PLATFORMS = [BINARY_SENSOR_DOMAIN, CAMERA_DOMAIN, SENSOR_DOMAIN, SWITCH_DOMAIN]
 
 
 def create_motioneye_client(
@@ -622,6 +623,7 @@ class MotionEyeEntity(CoordinatorEntity):  # type: ignore[misc]
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
+        options: dict[str, Any],
     ) -> None:
         """Initialize a motionEye entity."""
         self._camera_id = camera[KEY_ID]
@@ -635,6 +637,7 @@ class MotionEyeEntity(CoordinatorEntity):  # type: ignore[misc]
         )
         self._client = client
         self._camera: dict[str, Any] | None = camera
+        self._options = options
         super().__init__(coordinator)
 
     @property

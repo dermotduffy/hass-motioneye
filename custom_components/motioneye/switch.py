@@ -50,6 +50,7 @@ async def async_setup_entry(
                     switch_key,
                     entry_data[CONF_CLIENT],
                     entry_data[CONF_COORDINATOR],
+                    entry.options,
                 )
                 for switch_key in MOTIONEYE_SWITCHES
             ]
@@ -69,6 +70,7 @@ class MotionEyeSwitch(MotionEyeEntity, SwitchEntity):  # type: ignore[misc]
         switch_key: str,
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
+        options: dict[str, Any],
     ):
         """Initialize the switch."""
         self._switch_key = switch_key
@@ -83,6 +85,7 @@ class MotionEyeSwitch(MotionEyeEntity, SwitchEntity):  # type: ignore[misc]
             camera,
             client,
             coordinator,
+            options,
         )
 
     @property

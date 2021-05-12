@@ -106,6 +106,7 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
             camera,
             client,
             coordinator,
+            options,
         )
         MjpegCamera.__init__(
             self,

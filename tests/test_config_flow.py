@@ -12,6 +12,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.motioneye.const import (
     CONF_ADMIN_PASSWORD,
     CONF_ADMIN_USERNAME,
+    CONF_EVENT_DURATION,
     CONF_STREAM_URL_TEMPLATE,
     CONF_SURVEILLANCE_PASSWORD,
     CONF_SURVEILLANCE_USERNAME,
@@ -320,6 +321,7 @@ async def test_options(hass: HomeAssistant) -> None:
         assert result["data"][CONF_WEBHOOK_SET]
         assert result["data"][CONF_WEBHOOK_SET_OVERWRITE]
         assert CONF_STREAM_URL_TEMPLATE not in result["data"]
+        assert CONF_EVENT_DURATION not in result["data"]
 
 
 async def test_advanced_options(hass: HomeAssistant) -> None:
@@ -345,6 +347,7 @@ async def test_advanced_options(hass: HomeAssistant) -> None:
                 CONF_WEBHOOK_SET: True,
                 CONF_WEBHOOK_SET_OVERWRITE: True,
                 CONF_STREAM_URL_TEMPLATE: "http://moo",
+                CONF_EVENT_DURATION: 15,
             },
         )
         await hass.async_block_till_done()
@@ -352,3 +355,4 @@ async def test_advanced_options(hass: HomeAssistant) -> None:
         assert result["data"][CONF_WEBHOOK_SET]
         assert result["data"][CONF_WEBHOOK_SET_OVERWRITE]
         assert result["data"][CONF_STREAM_URL_TEMPLATE] == "http://moo"
+        assert result["data"][CONF_EVENT_DURATION] == 15
