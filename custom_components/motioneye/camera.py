@@ -5,7 +5,7 @@ import logging
 from typing import Any, Callable
 
 import aiohttp
-import jinja2
+from jinja2 import Environment
 from motioneye_client.client import MotionEyeClient, MotionEyeClientURLParseError
 from motioneye_client.const import (
     DEFAULT_SURVEILLANCE_USERNAME,
@@ -132,7 +132,11 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
         streaming_url = None
 
         if streaming_template:
-            streaming_url = jinja2.Template(streaming_template).render(**camera)
+            # Can't use homeassistant.helpers.template as it requires hass
+            # which is not available on constructior.
+            streaming_url = (
+                Environment().from_string(streaming_template).render(**camera)
+            )
         else:
             try:
                 streaming_url = self._client.get_camera_stream_url(camera)
