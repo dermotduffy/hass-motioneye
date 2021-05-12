@@ -51,9 +51,16 @@ repos:
           - motioneye-client==0.3.7
         verbose: true
         args:
-          - --strict
+          - --check-untyped-defs
+          - --disallow-incomplete-defs
+          - --disallow-subclassing-any
+          - --disallow-untyped-decorators
+          - --disallow-untyped-defs
+          - --no-implicit-optional
+          - --strict-equality
+          - --warn-return-any
           - --warn-unreachable
-          - --allow-any-generics
+          - --warn-unused-ignores
           - --ignore-missing-imports
           - --show-error-codes
   - repo: https://github.com/PyCQA/isort
