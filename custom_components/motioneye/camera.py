@@ -5,7 +5,7 @@ import logging
 from typing import Any, Callable
 
 import aiohttp
-from jinja2 import Template
+import jinja2
 from motioneye_client.client import MotionEyeClient, MotionEyeClientURLParseError
 from motioneye_client.const import (
     DEFAULT_SURVEILLANCE_USERNAME,
@@ -132,7 +132,7 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
         streaming_url = None
 
         if streaming_template:
-            streaming_url = Template(streaming_template).render(**camera)
+            streaming_url = jinja2.Template(streaming_template).render(**camera)
         else:
             try:
                 streaming_url = self._client.get_camera_stream_url(camera)
