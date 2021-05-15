@@ -362,7 +362,7 @@ async def test_async_resolve_media_failure(hass: HomeAssistant) -> None:
     with pytest.raises(MediaSourceError):
         await media_source.async_resolve_media(
             hass,
-            f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{broken_device.id}#3#4",
+            f"{const.URI_SCHEME}{DOMAIN}/{TEST_CONFIG_ENTRY_ID}#{broken_device.id}#images#4",
         )
 
     # Kind is incorrect.

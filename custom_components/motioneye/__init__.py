@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 from typing import Any, Callable, cast
 from urllib.parse import urlencode
 
@@ -11,6 +12,7 @@ from motioneye_client.client import (
     MotionEyeClient,
     MotionEyeClientError,
     MotionEyeClientInvalidAuthError,
+    MotionEyeClientPathError,
 )
 from motioneye_client.const import (
     KEY_ACTION_SNAPSHOT,
@@ -18,6 +20,7 @@ from motioneye_client.const import (
     KEY_HTTP_METHOD_GET,
     KEY_ID,
     KEY_NAME,
+    KEY_ROOT_DIRECTORY,
     KEY_TEXT_OVERLAY_CAMERA_NAME,
     KEY_TEXT_OVERLAY_CUSTOM_TEXT,
     KEY_TEXT_OVERLAY_CUSTOM_TEXT_LEFT,
@@ -27,6 +30,8 @@ from motioneye_client.const import (
     KEY_TEXT_OVERLAY_RIGHT,
     KEY_TEXT_OVERLAY_TIMESTAMP,
     KEY_WEB_HOOK_CONVERSION_SPECIFIERS,
+    KEY_WEB_HOOK_CS_FILE_PATH,
+    KEY_WEB_HOOK_CS_FILE_TYPE,
     KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
     KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
     KEY_WEB_HOOK_NOTIFICATIONS_URL,
@@ -34,7 +39,6 @@ from motioneye_client.const import (
     KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
     KEY_WEB_HOOK_STORAGE_URL,
 )
-from multidict import MultiDictProxy
 import voluptuous as vol
 
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
@@ -90,6 +94,7 @@ from .const import (
     DOMAIN,
     EVENT_FILE_STORED,
     EVENT_FILE_STORED_KEYS,
+    EVENT_FILE_URL,
     EVENT_MOTION_DETECTED,
     EVENT_MOTION_DETECTED_KEYS,
     MOTIONEYE_MANUFACTURER,
@@ -426,6 +431,19 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
+def get_media_url(
+    client: MotionEyeClient, camera_id: int, path: str, image: bool
+) -> str | None:
+    """Get the URL for a motionEye media item."""
+    try:
+        if image:
+            return client.get_image_url(camera_id, path)
+        else:
+            return client.get_movie_url(camera_id, path)
+    except MotionEyeClientPathError:
+        return None
+
+
 class MotionEyeServices:
     """Class that holds motionEye services that should be published to hass."""
 
@@ -576,6 +594,43 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
     requires_auth = False
     url = API_PATH_EVENT_REGEXP
 
+    def _get_media_browser_url(
+        self,
+        hass: HomeAssistant,
+        device: dr.DeviceEntry,
+        event_file_path: str,
+        event_file_type: int,
+    ) -> str | None:
+        config_entry_id = next(iter(device.config_entries), None)
+        client = hass.data[DOMAIN].get(config_entry_id, {}).get(CONF_CLIENT)
+        coordinator = hass.data[DOMAIN].get(config_entry_id, {}).get(CONF_COORDINATOR)
+
+        if not coordinator or not client:
+            return None
+
+        for identifier in device.identifiers:
+            data = split_motioneye_device_identifier(identifier)
+            if data is not None:
+                camera_id = data[2]
+                camera = get_camera_from_cameras(camera_id, coordinator.data)
+                break
+        else:
+            return None
+
+        root_directory = camera.get(KEY_ROOT_DIRECTORY) if camera else None
+        if root_directory is None:
+            return None
+
+        # The file_path in the event is the full local filesystem path to the
+        # media. To convert that to the media path that motionEye will
+        # understanding, we need to strip the root directory from the path.
+        if os.path.commonprefix([root_directory, event_file_path]) == root_directory:
+            file_path = "/" + os.path.relpath(event_file_path, root_directory)
+            return get_media_url(
+                client, camera_id, file_path, client.is_file_type_image(event_file_type)
+            )
+        return None
+
     async def get(
         self, request: web.Request, device_id: str, event: str
     ) -> web.Response:
@@ -592,7 +647,24 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
                     status_code=HTTP_NOT_FOUND,
                 ),
             )
-        await self._fire_event(hass, event, device, request.query)
+        data = dict(request.query)
+
+        if KEY_WEB_HOOK_CS_FILE_PATH in data and KEY_WEB_HOOK_CS_FILE_TYPE in data:
+            try:
+                event_type = int(data[KEY_WEB_HOOK_CS_FILE_TYPE])
+            except ValueError:
+                pass
+            else:
+                url = self._get_media_browser_url(
+                    hass,
+                    device,
+                    data[KEY_WEB_HOOK_CS_FILE_PATH],
+                    event_type,
+                )
+                if url:
+                    data[EVENT_FILE_URL] = url
+
+        await self._fire_event(hass, event, device, data)
         return cast(web.Response, self.json({}))
 
     async def _fire_event(
@@ -600,7 +672,7 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
         hass: HomeAssistant,
         event_type: str,
         device: dr.DeviceEntry,
-        data: MultiDictProxy[str],
+        data: dict[str, Any],
     ) -> None:
         """Fire a Home Assistant event."""
         hass.bus.async_fire(
