@@ -44,6 +44,7 @@ import voluptuous as vol
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.camera.const import DOMAIN as CAMERA_DOMAIN
 from homeassistant.components.http import HomeAssistantView
+from homeassistant.components.media_source.const import URI_SCHEME
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntry
@@ -95,6 +96,7 @@ from .const import (
     EVENT_FILE_STORED,
     EVENT_FILE_STORED_KEYS,
     EVENT_FILE_URL,
+    EVENT_MEDIA_CONTENT_ID,
     EVENT_MOTION_DETECTED,
     EVENT_MOTION_DETECTED_KEYS,
     MOTIONEYE_MANUFACTURER,
@@ -594,19 +596,19 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
     requires_auth = False
     url = API_PATH_EVENT_REGEXP
 
-    def _get_media_browser_url(
+    def _get_media_event_data(
         self,
         hass: HomeAssistant,
         device: dr.DeviceEntry,
         event_file_path: str,
         event_file_type: int,
-    ) -> str | None:
+    ) -> dict[str, str]:
         config_entry_id = next(iter(device.config_entries), None)
         client = hass.data[DOMAIN].get(config_entry_id, {}).get(CONF_CLIENT)
         coordinator = hass.data[DOMAIN].get(config_entry_id, {}).get(CONF_COORDINATOR)
 
         if not coordinator or not client:
-            return None
+            return {}
 
         for identifier in device.identifiers:
             data = split_motioneye_device_identifier(identifier)
@@ -615,21 +617,33 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
                 camera = get_camera_from_cameras(camera_id, coordinator.data)
                 break
         else:
-            return None
+            return {}
 
         root_directory = camera.get(KEY_ROOT_DIRECTORY) if camera else None
         if root_directory is None:
-            return None
+            return {}
+
+        kind = "images" if client.is_file_type_image(event_file_type) else "movies"
 
         # The file_path in the event is the full local filesystem path to the
         # media. To convert that to the media path that motionEye will
         # understanding, we need to strip the root directory from the path.
         if os.path.commonprefix([root_directory, event_file_path]) == root_directory:
             file_path = "/" + os.path.relpath(event_file_path, root_directory)
-            return get_media_url(
-                client, camera_id, file_path, client.is_file_type_image(event_file_type)
+            output = {
+                EVENT_MEDIA_CONTENT_ID: f"{URI_SCHEME}{DOMAIN}/{config_entry_id}#{device.id}#{kind}#{file_path}"
+            }
+            url = get_media_url(
+                client,
+                camera_id,
+                file_path,
+                kind == "images",
             )
-        return None
+            if url:
+                output[EVENT_FILE_URL] = url
+            return output
+
+        return {}
 
     async def get(
         self, request: web.Request, device_id: str, event: str
@@ -655,14 +669,14 @@ class MotionEyeView(HomeAssistantView):  # type: ignore[misc]
             except ValueError:
                 pass
             else:
-                url = self._get_media_browser_url(
-                    hass,
-                    device,
-                    data[KEY_WEB_HOOK_CS_FILE_PATH],
-                    event_type,
+                data.update(
+                    self._get_media_event_data(
+                        hass,
+                        device,
+                        data[KEY_WEB_HOOK_CS_FILE_PATH],
+                        event_type,
+                    )
                 )
-                if url:
-                    data[EVENT_FILE_URL] = url
 
         await self._fire_event(hass, event, device, data)
         return cast(web.Response, self.json({}))
