@@ -5,7 +5,6 @@ import logging
 from pathlib import PurePath
 from typing import Optional, Tuple, cast
 
-from motioneye_client.client import MotionEyeClientPathError
 from motioneye_client.const import KEY_MEDIA_LIST, KEY_MIME_TYPE, KEY_PATH
 
 from homeassistant.components.media_player.const import (
@@ -26,7 +25,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import HomeAssistantType
 
-from . import split_motioneye_device_identifier
+from . import get_media_url, split_motioneye_device_identifier
 from .const import CONF_CLIENT, DOMAIN
 
 MIME_TYPE_MAP = {
@@ -77,18 +76,16 @@ class MotionEyeMediaSource(MediaSource):  # type: ignore[misc]
 
         config = self._get_config_or_raise(config_id)
         device = self._get_device_or_raise(device_id)
-        camera_id = self._get_camera_id_or_raise(config, device)
         self._verify_kind_or_raise(kind)
-        path = self._get_path_or_raise(path)
 
-        client = self.hass.data[DOMAIN][config.entry_id][CONF_CLIENT]
-        try:
-            if kind == "movies":
-                url = client.get_movie_url(camera_id, path)
-            else:
-                url = client.get_image_url(camera_id, path)
-        except MotionEyeClientPathError as exc:
-            raise Unresolvable from exc
+        url = get_media_url(
+            self.hass.data[DOMAIN][config.entry_id][CONF_CLIENT],
+            self._get_camera_id_or_raise(config, device),
+            self._get_path_or_raise(path),
+            kind == "images",
+        )
+        if not url:
+            raise Unresolvable(f"Could not resolve media item: {item.identifier}")
 
         return PlayMedia(url, MIME_TYPE_MAP[kind])
 

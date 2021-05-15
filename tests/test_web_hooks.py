@@ -2,11 +2,12 @@
 import copy
 import logging
 from typing import Any
-from unittest.mock import AsyncMock, call, patch
+from unittest.mock import AsyncMock, Mock, call, patch
 
 from motioneye_client.const import (
     KEY_CAMERAS,
     KEY_HTTP_METHOD_GET,
+    KEY_ROOT_DIRECTORY,
     KEY_WEB_HOOK_NOTIFICATIONS_ENABLED,
     KEY_WEB_HOOK_NOTIFICATIONS_HTTP_METHOD,
     KEY_WEB_HOOK_NOTIFICATIONS_URL,
@@ -14,12 +15,16 @@ from motioneye_client.const import (
     KEY_WEB_HOOK_STORAGE_HTTP_METHOD,
     KEY_WEB_HOOK_STORAGE_URL,
 )
-from pytest_homeassistant_custom_component.common import async_capture_events
+from pytest_homeassistant_custom_component.common import (
+    async_capture_events,
+    async_fire_time_changed,
+)
 
 from custom_components.motioneye.const import (
     API_PATH_DEVICE_ROOT,
     API_PATH_ROOT,
     CONF_WEBHOOK_SET_OVERWRITE,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
     EVENT_FILE_STORED,
     EVENT_MOTION_DETECTED,
@@ -29,6 +34,7 @@ from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.setup import async_setup_component
+import homeassistant.util.dt as dt_util
 
 from . import (
     TEST_CAMERA,
@@ -312,3 +318,132 @@ async def test_bad_query_no_device(hass: HomeAssistant, aiohttp_client: Any) -> 
         API_PATH_DEVICE_ROOT + "not-a-real-device" + "/" + EVENT_MOTION_DETECTED
     )
     assert resp.status == HTTP_NOT_FOUND
+
+
+async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None:
+    """Test an event with a file path generates a media URL."""
+    await async_setup_component(hass, "http", {"http": {}})
+
+    device_registry = await dr.async_get_registry(hass)
+    client = create_mock_motioneye_client()
+    config_entry = await setup_mock_motioneye_config_entry(hass, client=client)
+
+    device = device_registry.async_get_or_create(
+        config_entry_id=config_entry.entry_id,
+        identifiers={TEST_CAMERA_DEVICE_IDENTIFIER},
+    )
+
+    aio_client = await aiohttp_client(hass.http.app)
+
+    events = async_capture_events(hass, f"{DOMAIN}.{EVENT_FILE_STORED}")
+
+    client.get_movie_url = Mock(return_value="http://movie-url")
+    client.get_image_url = Mock(return_value="http://image-url")
+
+    # Test: Movie storage.
+    client.is_file_type_image = Mock(return_value=False)
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + f"&file_path=/var/lib/motioneye/{TEST_CAMERA_NAME}/dir/one"
+        + "&file_type=8"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 1
+    assert events[-1].data["file_url"] == "http://movie-url"
+    assert client.get_movie_url.call_args == call(TEST_CAMERA_ID, "/dir/one")
+
+    # Test: Image storage.
+    client.is_file_type_image = Mock(return_value=True)
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + f"&file_path=/var/lib/motioneye/{TEST_CAMERA_NAME}/dir/two"
+        + "&file_type=4"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 2
+    assert events[-1].data["file_url"] == "http://image-url"
+    assert client.get_image_url.call_args == call(TEST_CAMERA_ID, "/dir/two")
+
+    # Test: Invalid file type.
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + f"&file_path=/var/lib/motioneye/{TEST_CAMERA_NAME}/dir/two"
+        + "&file_type=NOT_AN_INT"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 3
+    assert "file_url" not in events[-1].data
+
+    # Test: Different file path.
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + "&file_path=/var/random"
+        + "&file_type=8"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 4
+    assert "file_url" not in events[-1].data
+
+    # Test: Not a loaded motionEye config entry.
+    wrong_device = device_registry.async_get_or_create(
+        config_entry_id="wrong_config_id", identifiers={("motioneye", "a_1")}
+    )
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + wrong_device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + f"&file_path=/var/lib/motioneye/{TEST_CAMERA_NAME}/dir/two"
+        + "&file_type=8"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 5
+    assert "file_url" not in events[-1].data
+
+    # Test: No root directory.
+    camera = copy.deepcopy(TEST_CAMERA)
+    del camera[KEY_ROOT_DIRECTORY]
+    client.async_get_cameras = AsyncMock(return_value={"cameras": [camera]})
+    async_fire_time_changed(hass, dt_util.utcnow() + DEFAULT_SCAN_INTERVAL)
+    await hass.async_block_till_done()
+
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + f"&file_path=/var/lib/motioneye/{TEST_CAMERA_NAME}/dir/two"
+        + "&file_type=8"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 6
+    assert "file_url" not in events[-1].data
+
+    # Test: Device has incorrect device identifiers.
+    device_registry.async_update_device(
+        device_id=device.id, new_identifiers={"not", "motioneye"}
+    )
+
+    resp = await aio_client.get(
+        API_PATH_DEVICE_ROOT
+        + device.id
+        + f"/{EVENT_FILE_STORED}"
+        + "?"
+        + f"&file_path=/var/lib/motioneye/{TEST_CAMERA_NAME}/dir/two"
+        + "&file_type=8"
+    )
+    assert resp.status == HTTP_OK
+    assert len(events) == 7
+    assert "file_url" not in events[-1].data
