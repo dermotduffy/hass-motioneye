@@ -91,6 +91,7 @@ EVENT_FILE_STORED_KEYS = [
 ]
 
 EVENT_FILE_URL = "file_url"
+EVENT_MEDIA_CONTENT_ID = "media_content_id"
 
 MOTIONEYE_MANUFACTURER = "motionEye"
 

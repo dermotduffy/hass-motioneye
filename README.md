@@ -158,15 +158,30 @@ http://motioneye/video/{{ id }}
 ### Events
 
 On receipt of a motion or file stored callbacks, events will be fired which can be used
-in automations (etc). All event data includes the Home Assistant `device_id` for this
-motionEye camera device, and the Home Assistant device `name`. Event data also includes
-as many [Motion Conversion
-Specifiers](https://motion-project.github.io/motion_config.html#conversion_specifiers)
-as make sense for that event type.
+in automations (etc).
 
-Note: Any additional `&key=value` pairs added manually to the motionEye webhook (in the
-motionEye UI) will automatically propagate to the event data. If you manually tweak the
-web hook, remove the `src=hass-motioneye` parameter or the web hook will be overwritten.
+#### Data in events
+
+   * All event data includes the Home Assistant `device_id` for this motionEye
+     camera device, and the Home Assistant device `name`.
+   * Event data also includes as many [Motion Conversion
+     Specifiers](https://motion-project.github.io/motion_config.html#conversion_specifiers)
+     as make sense for that event type.
+   * Any additional `&key=value` pairs added manually to the motionEye webhook
+     (in the motionEye UI) will automatically propagate to the event data. If
+     you manually tweak the web hook, remove the `src=hass-motioneye` parameter
+     or the web hook will be overwritten.
+   * For file storage events, the integration will automatically add
+     `media_content_id` (an identifier that can be used to play the media in a
+     Home Assistant media player) and `file_url` (a raw URL to the media). See
+     [example automation](#automation-movies) below for an illustration of how
+     this can be used.
+   * `file_type` will be less than 8 if the media stored is an image, otherwise
+     it is a movie/video. See [the motion
+     source](https://github.com/Motion-Project/motion/blob/master/src/motion.h#L177)
+     for more details.
+
+
 #### Example motion detected event
 
 ```json
@@ -212,8 +227,10 @@ web hook, remove the `src=hass-motioneye` parameter or the web hook will be over
         "name": "Office",
         "camera_id": "2",
         "event": "03",
-        "file_path": "/var/lib/motioneye/Camera2/2021-04-10/21-27-53.jpg",
-        "file_type": "1",
+        "file_path": "/var/lib/motioneye/Camera2/2021-04-10/21-27-53.mp4",
+        "file_type": "8",
+        "media_content_id": "media-source://motioneye/74565ad414754616000674c87bdc876c#662aa1c77657dbc4af836abcdf80000a#movies#/2021-04-10/21-27-53.mp4",
+        "file_url": "https://cctv/movie/2/playback/2021-04-10/21-27-53.mp4?_username=admin&_signature=bc4565fe414754616000674c87bdcacbd",
         "fps": "25",
         "frame_number": "21",
         "height": "1080",
@@ -411,6 +428,28 @@ must be switched on for this automation to work (controllable via `switch.<name>
 ```
 
 <img src="images/screenshot-alarm-armed-automation.png" alt="hass-motioneye alarm automation" />
+
+<a name="automation-movies"></a>
+### Automatically play stored movies
+
+An automation to cast stored movie clips to a TV as they arrive.
+
+```yaml
+- alias: 'Cast motionEye movie clips'
+  trigger:
+    platform: event
+    event_type: 'motioneye.file_stored'
+    event_data:
+      # Only cast video.
+      file_type: '8'
+  action:
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.kitchen_tv
+      data:
+        media_content_id: "{{ trigger.event.data.media_content_id }}"
+        media_content_type: video
+```
 
 ## Debugging
 

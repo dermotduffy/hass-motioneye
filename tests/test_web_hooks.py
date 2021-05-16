@@ -42,6 +42,7 @@ from . import (
     TEST_CAMERA_ID,
     TEST_CAMERA_NAME,
     TEST_CAMERAS,
+    TEST_CONFIG_ENTRY_ID,
     create_mock_motioneye_client,
     create_mock_motioneye_config_entry,
     setup_mock_motioneye_config_entry,
@@ -320,8 +321,8 @@ async def test_bad_query_no_device(hass: HomeAssistant, aiohttp_client: Any) -> 
     assert resp.status == HTTP_NOT_FOUND
 
 
-async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None:
-    """Test an event with a file path generates a media URL."""
+async def test_event_media_data(hass: HomeAssistant, aiohttp_client: Any) -> None:
+    """Test an event with a file path generates media data."""
     await async_setup_component(hass, "http", {"http": {}})
 
     device_registry = await dr.async_get_registry(hass)
@@ -353,6 +354,10 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 1
     assert events[-1].data["file_url"] == "http://movie-url"
+    assert (
+        events[-1].data["media_content_id"]
+        == f"media-source://motioneye/{TEST_CONFIG_ENTRY_ID}#{device.id}#movies#/dir/one"
+    )
     assert client.get_movie_url.call_args == call(TEST_CAMERA_ID, "/dir/one")
 
     # Test: Image storage.
@@ -368,6 +373,10 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 2
     assert events[-1].data["file_url"] == "http://image-url"
+    assert (
+        events[-1].data["media_content_id"]
+        == f"media-source://motioneye/{TEST_CONFIG_ENTRY_ID}#{device.id}#images#/dir/two"
+    )
     assert client.get_image_url.call_args == call(TEST_CAMERA_ID, "/dir/two")
 
     # Test: Invalid file type.
@@ -382,6 +391,7 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 3
     assert "file_url" not in events[-1].data
+    assert "media_content_id" not in events[-1].data
 
     # Test: Different file path.
     resp = await aio_client.get(
@@ -395,6 +405,7 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 4
     assert "file_url" not in events[-1].data
+    assert "media_content_id" not in events[-1].data
 
     # Test: Not a loaded motionEye config entry.
     wrong_device = device_registry.async_get_or_create(
@@ -411,6 +422,7 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 5
     assert "file_url" not in events[-1].data
+    assert "media_content_id" not in events[-1].data
 
     # Test: No root directory.
     camera = copy.deepcopy(TEST_CAMERA)
@@ -430,6 +442,7 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 6
     assert "file_url" not in events[-1].data
+    assert "media_content_id" not in events[-1].data
 
     # Test: Device has incorrect device identifiers.
     device_registry.async_update_device(
@@ -447,3 +460,4 @@ async def test_event_media_url(hass: HomeAssistant, aiohttp_client: Any) -> None
     assert resp.status == HTTP_OK
     assert len(events) == 7
     assert "file_url" not in events[-1].data
+    assert "media_content_id" not in events[-1].data
