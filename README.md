@@ -59,6 +59,15 @@ Home Assistant > HACS > Integrations > "Explore & Add Integrations" > motionEye
 Home Assistant > Configuration > Integrations > Add Integration > motionEye
 ```
 
+<a name="addon"></a>
+### Usage with the motionEye add-on
+
+This integretion can optionally be used in conjunction with the community
+[add-on for motionEye](https://github.com/hassio-addons/addon-motioneye).
+
+To configure the integration to use the add-on, simply use
+`http://localhost:28765` as the URL field in the integration configuration.
+
 ### Configuration Variables
 
 | Variable              | Description                                                                              |
@@ -89,6 +98,9 @@ Home Assistant > Configuration > Integrations > motionEye > Options
   proxies). See [Camera MJPEG Streams](#streams) below. This option is only shown to
   users who have [advanced
   mode](https://www.home-assistant.io/blog/2019/07/17/release-96/#advanced-mode) enabled.
+* [**Advanced**]: **Event binary sensor seconds** [default=30]: The number of
+  seconds after a [motion or file store event](#events), after which the [binary
+  sensor](#convenience-binary-sensors) turns off.
 
 ## Usage
 
@@ -155,6 +167,7 @@ Use the camera id in the stream URL:
 http://motioneye/video/{{ id }}
 ```
 
+<a name="events"></a>
 ### Events
 
 On receipt of a motion or file stored callbacks, events will be fired which can be used
@@ -256,7 +269,8 @@ in automations (etc).
 For convenience (e.g. UI display, entity state recording) binary sensor entities
 (`binary_sensor.<name>_motion` and `binary_sensor.<name>_file_stored`) are
 included to provide the equivalent on/off signal in entity form. The state of
-the binary sensors resets after 30 seconds.
+the binary sensors resets after a configurable number of seconds (see
+[options](#options) above).
 
 ### Services
 
