@@ -109,6 +109,7 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
 PLATFORMS = [BINARY_SENSOR_DOMAIN, CAMERA_DOMAIN, SENSOR_DOMAIN, SWITCH_DOMAIN]
 
 
@@ -149,10 +150,10 @@ def get_motioneye_entity_unique_id(
 
 
 def get_camera_from_cameras(
-    camera_id: int, data: dict[str, Any]
+    camera_id: int, data: dict[str, Any] | None
 ) -> dict[str, Any] | None:
     """Get an individual camera dict from a multiple cameras data response."""
-    for camera in data.get(KEY_CAMERAS) or []:
+    for camera in data.get(KEY_CAMERAS, []) if data else []:
         if camera.get(KEY_ID) == camera_id:
             val: dict[str, Any] = camera
             return val
