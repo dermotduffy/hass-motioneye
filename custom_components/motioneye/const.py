@@ -1,6 +1,4 @@
 """Constants for the motionEye integration."""
-from __future__ import annotations
-
 from datetime import timedelta
 from typing import Final
 
@@ -49,7 +47,6 @@ DEFAULT_SCAN_INTERVAL: Final = timedelta(seconds=30)
 
 EVENT_MOTION_DETECTED: Final = "motion_detected"
 EVENT_FILE_STORED: Final = "file_stored"
-
 
 EVENT_MOTION_DETECTED_KEYS: Final = [
     KEY_WEB_HOOK_CS_EVENT,

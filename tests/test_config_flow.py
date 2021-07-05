@@ -115,7 +115,6 @@ async def test_hassio_success(hass: HomeAssistant) -> None:
             },
         )
         await hass.async_block_till_done()
-    _LOGGER.error(result3)
     assert result3.get("type") == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
     assert result3.get("title") == "Add-on"
     assert result3.get("data") == {
