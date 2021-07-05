@@ -1,3 +1,6 @@
-homeassistant
+homeassistant==2021.7.0b0
 aiohttp_cors
-motioneye-client==0.3.8
+motioneye-client==0.3.9
+
+# Home assistant should explicitly include these.
+av

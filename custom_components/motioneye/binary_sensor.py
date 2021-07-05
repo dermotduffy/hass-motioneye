@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+from types import MappingProxyType
 from typing import Any, Callable
 
 from motioneye_client.client import MotionEyeClient
@@ -71,7 +72,7 @@ class MotionEyeEventBinarySensor(MotionEyeEntity, BinarySensorEntity):  # type: 
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
-        options: dict[str, Any],
+        options: MappingProxyType[str, Any],
         event: str,
         friendly_name: str,
     ) -> None:
@@ -95,6 +96,7 @@ class MotionEyeEventBinarySensor(MotionEyeEntity, BinarySensorEntity):  # type: 
         """Return true if the binary sensor is on."""
         return self._state
 
+    @callback  # type: ignore[misc]
     def _cancel_timer(self) -> None:
         """Cancel the internal state timer."""
         if self._timer_unsub is not None:
@@ -147,7 +149,7 @@ class MotionEyeMotionBinarySensor(MotionEyeEventBinarySensor):
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
-        options: dict[str, Any],
+        options: MappingProxyType[str, Any],
     ) -> None:
         """Initialize the binary sensor."""
         super().__init__(
@@ -176,7 +178,7 @@ class MotionEyeFileStoredBinarySensor(MotionEyeEventBinarySensor):
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
-        options: dict[str, Any],
+        options: MappingProxyType[str, Any],
     ) -> None:
         """Initialize the binary sensor."""
         super().__init__(

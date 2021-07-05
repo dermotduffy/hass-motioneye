@@ -1,6 +1,7 @@
 """Switch platform for motionEye."""
 from __future__ import annotations
 
+from types import MappingProxyType
 from typing import Any, Callable
 
 from motioneye_client.client import MotionEyeClient
@@ -20,7 +21,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
-from . import MotionEyeEntity, get_camera_from_cameras, listen_for_new_cameras
+from . import MotionEyeEntity, listen_for_new_cameras
 from .const import CONF_CLIENT, CONF_COORDINATOR, DOMAIN, TYPE_MOTIONEYE_SWITCH_BASE
 
 MOTIONEYE_SWITCHES = [
@@ -70,8 +71,8 @@ class MotionEyeSwitch(MotionEyeEntity, SwitchEntity):  # type: ignore[misc]
         switch_key: str,
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
-        options: dict[str, Any],
-    ):
+        options: MappingProxyType[str, str],
+    ) -> None:
         """Initialize the switch."""
         self._switch_key = switch_key
         self._switch_key_friendly_name = " ".join(
@@ -117,9 +118,3 @@ class MotionEyeSwitch(MotionEyeEntity, SwitchEntity):  # type: ignore[misc]
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the switch."""
         await self._async_send_set_camera(False)
-
-    @callback  # type: ignore[misc]
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator."""
-        self._camera = get_camera_from_cameras(self._camera_id, self.coordinator.data)
-        super()._handle_coordinator_update()

@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable
+from types import MappingProxyType
+from typing import Any
 
 import aiohttp
 from jinja2 import Template
@@ -30,6 +31,7 @@ from homeassistant.const import (
     HTTP_DIGEST_AUTHENTICATION,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import MotionEyeEntity, is_acceptable_camera, listen_for_new_cameras
@@ -50,7 +52,7 @@ PLATFORMS = ["camera"]
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: Callable
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up motionEye from a config entry."""
     entry_data = hass.data[DOMAIN][entry.entry_id]
@@ -88,7 +90,7 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
-        options: dict[str, Any],
+        options: MappingProxyType[str, str],
     ) -> None:
         """Initialize a MJPEG camera."""
         self._surveillance_username = username
@@ -97,7 +99,6 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
 
         # motionEye cameras are always streaming or unavailable.
         self.is_streaming = True
-        self._options = options
 
         MotionEyeEntity.__init__(
             self,
@@ -112,7 +113,7 @@ class MotionEyeMjpegCamera(MotionEyeEntity, MjpegCamera):  # type: ignore[misc]
             self,
             {
                 CONF_VERIFY_SSL: False,
-                **self._get_mjpeg_camera_properties_for_camera(self._camera),
+                **self._get_mjpeg_camera_properties_for_camera(camera),
             },
         )
 

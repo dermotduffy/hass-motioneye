@@ -1,4 +1,4 @@
-"""Tests for the motionEye switch platform."""
+"""Tests for the motionEye binary sensor platform."""
 from __future__ import annotations
 
 import datetime
