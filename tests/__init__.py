@@ -9,6 +9,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.motioneye import get_motioneye_entity_unique_id
 from custom_components.motioneye.const import DOMAIN
+from homeassistant.config import async_process_ha_core_config
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_URL
 from homeassistant.core import HomeAssistant
@@ -175,7 +176,13 @@ async def setup_mock_motioneye_config_entry(
     config_entry: ConfigEntry | None = None,
     client: Mock | None = None,
 ) -> ConfigEntry:
-    """Add a mock MotionEye config entry to hass."""
+    """Create and setup a mock motionEye config entry."""
+
+    await async_process_ha_core_config(
+        hass,
+        {"external_url": "https://example.com"},
+    )
+
     config_entry = config_entry or create_mock_motioneye_config_entry(hass)
     client = client or create_mock_motioneye_client()
 

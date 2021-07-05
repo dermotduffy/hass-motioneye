@@ -6,10 +6,11 @@
   "config_flow": true,
   "dependencies": [
     "http",
-    "media_source"
+    "media_source",
+    "webhook"
   ],
   "requirements": [
-    "motioneye-client==0.3.8"
+    "motioneye-client==0.3.9"
   ],
   "codeowners": [
     "@dermotduffy"

@@ -55,15 +55,17 @@ async def test_text_overlay_bad_device_identifier(hass: HomeAssistant) -> None:
     )[0]
     device_registry = await dr.async_get_registry(hass)
 
+    # Set the device identifier to have a non-int camera_id.
+    device_registry.async_update_device(
+        device_id=device.id, new_identifiers={(DOMAIN, "host:port_str")}
+    )
+
     data = {
         ATTR_DEVICE_ID: device.id,
         KEY_TEXT_OVERLAY_LEFT: KEY_TEXT_OVERLAY_TIMESTAMP,
     }
 
-    # Set the device identifier to have a non-int camera_id.
-    device_registry.async_update_device(
-        device_id=device.id, new_identifiers={(DOMAIN, "host:port_str")}
-    )
+    client.reset_mock()
 
     await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
     await hass.async_block_till_done()
@@ -153,6 +155,7 @@ async def test_text_overlay_missing_device(hass: HomeAssistant) -> None:
         ATTR_DEVICE_ID: "not a device",
         KEY_TEXT_OVERLAY_LEFT: KEY_TEXT_OVERLAY_TIMESTAMP,
     }
+    client.reset_mock()
     client.async_get_camera = AsyncMock(return_value=copy.deepcopy(TEST_CAMERA))
     await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
     await hass.async_block_till_done()
@@ -169,6 +172,7 @@ async def test_text_overlay_no_such_camera(hass: HomeAssistant) -> None:
         ATTR_ENTITY_ID: TEST_CAMERA_ENTITY_ID,
         KEY_TEXT_OVERLAY_LEFT: KEY_TEXT_OVERLAY_TIMESTAMP,
     }
+    client.reset_mock()
     client.async_get_camera = AsyncMock(return_value={})
     await hass.services.async_call(DOMAIN, SERVICE_SET_TEXT_OVERLAY, data)
     await hass.async_block_till_done()

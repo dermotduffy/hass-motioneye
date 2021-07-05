@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from types import MappingProxyType
 from typing import Any, Callable
 
 from motioneye_client.client import MotionEyeClient
@@ -53,7 +54,7 @@ class MotionEyeActionSensor(MotionEyeEntity, SensorEntity):  # type: ignore[misc
         camera: dict[str, Any],
         client: MotionEyeClient,
         coordinator: DataUpdateCoordinator,
-        options: dict[str, Any],
+        options: MappingProxyType[str, str],
     ) -> None:
         """Initialize an action sensor."""
         MotionEyeEntity.__init__(
