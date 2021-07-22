@@ -18,6 +18,13 @@ The motionEye integration allows you to integrate your
 is an open source web-frontend for the motion daemon, used to centralize the management
 and visualization of multiple types of camera.
 
+<a name="migration-warning"></a>
+## Note on Migration
+
+This integration is mid-migration into HomeAssistant Core (i.e. no longer a custom integration). There are some permanent differences in functionality, these are listed below. Users are encouraged to avoid relying on this functionality to ensure compatibility when this migration is complete.
+
+* Binary sensors: The Core version of the motionEye integration will not feature binary sensors (see [relevant codereview feedback](https://github.com/home-assistant/core/pull/52493#discussion_r673674561)). Instead users should convert the events into a binary sensors [see example](https://www.home-assistant.io/integrations/template/#turning-an-event-into-a-binary-sensor).
+
 ## Features
 
    * Dynamic motionEye camera addition/removal.
@@ -271,6 +278,8 @@ For convenience (e.g. UI display, entity state recording) binary sensor entities
 included to provide the equivalent on/off signal in entity form. The state of
 the binary sensors resets after a configurable number of seconds (see
 [options](#options) above).
+
+Please see the [migration warning](#migration-warning) above.
 
 ### Services
 
