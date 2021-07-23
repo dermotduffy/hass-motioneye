@@ -82,7 +82,7 @@ jobs:
         run: |
           pytest -p no:sugar
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.5.0
+        uses: codecov/codecov-action@v2.0.2
         with:
           env_vars: OS,PYTHON
           verbose: true
