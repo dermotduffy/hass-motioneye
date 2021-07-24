@@ -24,6 +24,7 @@ and visualization of multiple types of camera.
 This integration is mid-migration into HomeAssistant Core (i.e. no longer a custom integration). There are some permanent differences in functionality, these are listed below. Users are encouraged to avoid relying on this functionality to ensure compatibility when this migration is complete.
 
 * Binary sensors: The Core version of the motionEye integration will not feature binary sensors (see [relevant codereview feedback](https://github.com/home-assistant/core/pull/52493#discussion_r673674561)). Instead users should convert the events into a binary sensors [see example](https://www.home-assistant.io/integrations/template/#turning-an-event-into-a-binary-sensor).
+* Switches: The Core version of the motionEye integration disables the `Text Overlay`, `Video Streaming` and `Upload Enabled` switches by default. They can be manually enabled in the UI for the device in Home Assistant.
 
 ## Features
 
