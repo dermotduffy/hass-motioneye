@@ -23,7 +23,7 @@ and visualization of multiple types of camera.
 
 This integration is mid-migration into HomeAssistant Core (i.e. no longer a custom integration). There are some permanent differences in functionality, these are listed below. Users are encouraged to avoid relying on this functionality to ensure compatibility when this migration is complete.
 
-* Binary sensors: The Core version of the motionEye integration will not feature binary sensors (see [relevant codereview feedback](https://github.com/home-assistant/core/pull/52493#discussion_r673674561)). Instead users should convert the events into a binary sensors [see example](https://www.home-assistant.io/integrations/template/#turning-an-event-into-a-binary-sensor).
+* Binary sensors: The Core version of the motionEye integration will not feature binary sensors (see [relevant codereview feedback](https://github.com/home-assistant/core/pull/52493#discussion_r673674561)). Instead users should convert events into a binary sensors [see example](#synthetic-binary-sensor).
 * Switches: The Core version of the motionEye integration disables the `Text Overlay`, `Video Streaming` and `Upload Enabled` switches by default. They can be manually enabled in the UI for the device in Home Assistant.
 
 ## Features
@@ -203,6 +203,7 @@ in automations (etc).
      for more details.
 
 
+<a name="motion-event"></a>
 #### Example motion detected event
 
 ```json
@@ -269,6 +270,45 @@ in automations (etc).
         "user_id": null
     }
 }
+```
+
+<a name="synthetic-binary-sensor"></a>
+### Example event to binary_sensor conversion
+
+Generate a synthetic binary sensor from an event:
+
+```yaml
+template:
+  trigger:
+    platform: event
+    event_type: "motioneye.motion_detected"
+    event_data:
+      name: "<your_camera_name>"
+  binary_sensor:
+    - name: Event recently fired
+      auto_off: 5
+      state: "true"
+```
+
+The `device_id` and `camera_id` fields can also be used to differentiate cameras, see full [event contents](#motion-event) above.
+
+See [related Home Assistant documentation](https://www.home-assistant.io/integrations/template/#turning-an-event-into-a-binary-sensor).
+
+### Example event automation
+
+Generate a notification from detected motion on the "Office" camera (note that name is case sensitive and should match the name of the camera in motionEye):
+
+```yaml
+trigger:
+  platform: event
+  event_type: "motioneye.motion_detected"
+  event_data:
+    name: "Office"
+action:
+  service: notify.<notifier>
+  data:
+    message: "Motion detected in the Office!"
+    title: "Motion Detected"
 ```
 
 <a name="convenience-binary-sensors"></a>
