@@ -11,22 +11,20 @@
 [![hacs](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://hacs.xyz)
 [![BuyMeCoffee](https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=flat-square)](https://www.buymeacoffee.com/dermotdu)
 
+<a name="migration-warning"></a>
+# Migration complete: Custom Integration Is Now Retired
+
+This integration has completed migration into Home Assistant Core. There are some permanent differences in functionality, these are listed below. This custom integration is now retired. Please use the default version that comes with Home Assistant Core.
+
+* **Binary sensors**: The Core version of the motionEye integration does not feature binary sensors (see [relevant codereview feedback](https://github.com/home-assistant/core/pull/52493#discussion_r673674561)). Instead users should convert events into a binary sensors [see example](#synthetic-binary-sensor).
+* **Switches**: The Core version of the motionEye integration disables the `Text Overlay`, `Video Streaming` and `Upload Enabled` switches by default. They can be manually enabled in the UI for the device in Home Assistant.
+
 # motionEye Home Assistant Integration
 
 The motionEye integration allows you to integrate your
 [motionEye](https://github.com/ccrisan/motioneye) server into Home Assistant. motionEye
 is an open source web-frontend for the motion daemon, used to centralize the management
 and visualization of multiple types of camera.
-
-<a name="migration-warning"></a>
-## Note on Migration
-
-This integration is mid-migration into HomeAssistant Core (i.e. no longer a custom integration). There are some permanent differences in functionality, these are listed below. Users are encouraged to avoid relying on this functionality to ensure compatibility when this migration is complete.
-
-* Binary sensors: The Core version of the motionEye integration will not feature binary sensors (see [relevant codereview feedback](https://github.com/home-assistant/core/pull/52493#discussion_r673674561)). Instead users should convert events into a binary sensors [see example](#synthetic-binary-sensor).
-* Switches: The Core version of the motionEye integration disables the `Text Overlay`, `Video Streaming` and `Upload Enabled` switches by default. They can be manually enabled in the UI for the device in Home Assistant.
-
-**Note**: As the [migration](https://github.com/dermotduffy/hass-motioneye/projects/3) is nearly complete, no further changes are planned for this repository.
 
 ## Features
 
@@ -533,23 +531,6 @@ logger:
     motioneye_client: debug
     custom_components.motioneye: debug
 ```
-
-## Long-term intention
-
-The goal is to integrate this `custom_component` into Home Assistant Core (non-HACS)
-integration. This process has an open-timeline because of the large backlog of code
-reviews for Home Assistant Core code submissions, but will probably take at 6-9 months
-before all of the functionality would likely be merged in (i.e. goal is to have it
-merged by the end of 2021).
-
-As part of that codereview process changes may be necessary (e.g. names, identifiers and
-functionality may change). There no guarantee of seamless migration from HACS -> Core
-for users as a result of these changes.
-
-Long-term, once this functionality is fully (or mostly) in Core, this custom component
-will not be necessary anymore and will be retired. You can track the PRs that are part
-of this move from custom to Core in the [Core Integration Project for
-hass-motioneye](https://github.com/dermotduffy/hass-motioneye/projects/3).
 
 ## Frequently Asked Questions
 
